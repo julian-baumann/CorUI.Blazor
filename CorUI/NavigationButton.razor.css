@@ -1,0 +1,33 @@
+.navigation-button {
+    background: transparent;
+    color: var(--text-color);
+    height: 38px;
+    margin-bottom: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    max-width: 100%;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+.navigation-button::before {
+    display: none;
+}
+
+.active {
+    background: var(--navigation-button-background);
+    color: white;
+    backdrop-filter: blur(40px) saturate(180%);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
+}
+
+.active::before {
+    display: block;
+}

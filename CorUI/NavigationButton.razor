@@ -1,0 +1,19 @@
+<button
+    class="navigation-button @(Active ? "active" : "")"
+    onclick="@OnClick">
+    @ChildContent
+</button>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public EventCallback Click { get; set; }
+    [Parameter] public bool Active { get; set; } = false;
+
+    private async Task OnClick()
+    {
+        if (Click.HasDelegate)
+        {
+            await Click.InvokeAsync(null);
+        }
+    }
+}

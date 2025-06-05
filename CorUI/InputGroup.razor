@@ -1,0 +1,13 @@
+<div class="input-group">
+    <div class="title">
+        @Title
+    </div>
+    <div class="input">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

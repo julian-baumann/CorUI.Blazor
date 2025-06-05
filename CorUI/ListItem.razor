@@ -1,0 +1,15 @@
+<div class="list-item">
+    @ChildContent
+</div>
+
+<Divider />
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}
+
+<style>
+    .list-item {
+        padding: 5px 0;
+    }
+</style>

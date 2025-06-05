@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-brands-400.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-brands-400.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-duotone-900.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-duotone-900.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-duotone-light-300.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-duotone-light-300.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-duotone-regular-400.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-duotone-regular-400.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-duotone-thin-100.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-duotone-thin-100.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-light-300.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-light-300.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-regular-400.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-regular-400.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-duotone-light-300.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-duotone-light-300.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-duotone-regular-400.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-duotone-regular-400.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-duotone-solid-900.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-duotone-solid-900.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-duotone-thin-100.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-duotone-thin-100.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-light-300.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-light-300.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-regular-400.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-regular-400.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-solid-900.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-solid-900.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-thin-100.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-sharp-thin-100.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-solid-900.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-solid-900.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-thin-100.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-thin-100.woff2" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-v4compatibility.ttf" />
+      <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-v4compatibility.woff2" />
+    </ItemGroup>
+
+</Project>

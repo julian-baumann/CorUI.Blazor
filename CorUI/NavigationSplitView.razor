@@ -1,0 +1,25 @@
+﻿<div class="page">
+    <div class="sidebar" style="max-width:@($"{SideBarWidth}px")">
+        <div class="header">
+            <div class="left">
+            </div>
+            <div class="right">
+                <button class="nav">
+                    <i class="fa-light fa-sidebar"></i>
+                </button>
+            </div>
+        </div>
+        @Sidebar
+    </div>
+    
+    <div class="content">
+        @Content
+    </div>
+</div>
+
+@code {
+    [Parameter] public RenderFragment? Sidebar { get; set; }
+    [Parameter] public RenderFragment? Content { get; set; }
+
+    [Parameter] public float? SideBarWidth { get; set; } = 300;
+}

@@ -1,0 +1,142 @@
+﻿@page "/"
+@using CorUI
+
+<PageTitle>CorUI Kitchen Sink</PageTitle>
+
+@code {
+    private string activeSection = "Card";
+    private string viewType = "Grid";
+    private string timeframe = "Day";
+    private string theme = "Light";
+}
+
+<NavigationSplitView SideBarWidth="220">
+    <Sidebar>
+        <NavigationButton Active="@(activeSection == "Card")" Click="@(() => activeSection = "Card")">Card</NavigationButton>
+        <NavigationButton Active="@(activeSection == "Divider")" Click="@(() => activeSection = "Divider")">Divider</NavigationButton>
+        <NavigationButton Active="@(activeSection == "InputGroup")" Click="@(() => activeSection = "InputGroup")">InputGroup</NavigationButton>
+        <NavigationButton Active="@(activeSection == "List")" Click="@(() => activeSection = "List")">List & ListItem</NavigationButton>
+        <NavigationButton Active="@(activeSection == "Menu")" Click="@(() => activeSection = "Menu")">Menu</NavigationButton>
+        <NavigationButton Active="@(activeSection == "Toggle")" Click="@(() => activeSection = "Toggle")">Toggle</NavigationButton>
+        <NavigationButton Active="@(activeSection == "Header")" Click="@(() => activeSection = "Header")">Header</NavigationButton>
+        <NavigationButton Active="@(activeSection == "SegmentedControl")" Click="@(() => activeSection = "SegmentedControl")">SegmentedControl</NavigationButton>
+    </Sidebar>
+    <Content>
+        @switch (activeSection)
+        {
+            case "Card":
+                <Card>
+                    <Title><b>Card Component</b></Title>
+                    <Content>
+                        <p>This is a Card. You can put any content here.</p>
+                    </Content>
+                </Card>;
+                break;
+            case "Divider":
+                <Card>
+                    <Title>Divider below:</Title>
+                    <Content>
+                        <p>Item 1</p>
+                        <Divider />
+                        <p>Item 2</p>
+                    </Content>
+                </Card>;
+                break;
+            case "InputGroup":
+                <Card>
+                    <Title><b>InputGroup Component</b></Title>
+                    <Content>
+                        <InputGroup Title="Name">
+                            <input placeholder="Enter your name" />
+                        </InputGroup>
+                        <InputGroup Title="Email">
+                            <input placeholder="Enter your email" />
+                        </InputGroup>
+                    </Content>
+                </Card>;
+                break;
+            case "List":
+                <Card>
+                    <Title><b>List &amp; ListItem Components</b></Title>
+                    <Content>
+                        <List>
+                            <ListItem>First item</ListItem>
+                            <ListItem>Second item</ListItem>
+                            <ListItem>Third item</ListItem>
+                        </List>
+                    </Content>
+                </Card>;
+                break;
+            case "Menu":
+                <Card>
+                    <Title><b>Menu Component</b></Title>
+                    <Content>
+                        <Menu>
+                            <MenuButton>
+                                Open Menu
+                            </MenuButton>
+                            <MenuContent>
+                                <List>
+                                    <ListItem>Menu Item 1</ListItem>
+                                    <ListItem>Menu Item 2</ListItem>
+                                    <ListItem>Menu Item 3</ListItem>
+                                </List>
+                            </MenuContent>
+                        </Menu>
+                    </Content>
+                </Card>;
+                break;
+            case "Toggle":
+                <Card>
+                    <Title><b>Toggle Component</b></Title>
+                    <Content>
+                        <Toggle Title="Enable feature" />
+                    </Content>
+                </Card>;
+                break;
+            case "Header":
+                <Header>
+                    
+                </Header>
+                break;
+            case "SegmentedControl":
+                <Card>
+                    <Title>SegmentedControl Component</Title>
+                    <Content>
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <div>
+                                <div style="font-weight: 500; margin-bottom: 0.75rem;">View Type</div>
+                                <SegmentedControl 
+                                    Options="@(new[] { "Grid", "List", "Gallery" })"
+                                    @bind-SelectedOption="viewType" />
+                            </div>
+
+                            <div>
+                                <div style="font-weight: 500; margin-bottom: 0.75rem;">Time Period</div>
+                                <SegmentedControl 
+                                    Options="@(new[] { "Day", "Week", "Month", "Year" })"
+                                    @bind-SelectedOption="timeframe" />
+                            </div>
+
+                            <div>
+                                <div style="font-weight: 500; margin-bottom: 0.75rem;">Theme Selection</div>
+                                <SegmentedControl 
+                                    Options="@(new[] { "Light", "Dark", "System" })"
+                                    @bind-SelectedOption="theme" />
+                            </div>
+
+                            <div style="margin-top: 0.5rem;">
+                                <div style="font-weight: 500; margin-bottom: 0.5rem;">Selected Values:</div>
+                                <ul style="list-style: none; margin: 0; padding: 0;">
+                                    <li>View Type: @viewType</li>
+                                    <li>Time Period: @timeframe</li>
+                                    <li>Theme: @theme</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </Content>
+                </Card>
+                break;
+        }
+    </Content>
+</NavigationSplitView>

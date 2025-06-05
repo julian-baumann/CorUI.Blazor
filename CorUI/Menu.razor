@@ -1,0 +1,253 @@
+@using Microsoft.JSInterop
+@implements IDisposable
+@inject IJSRuntime Js
+
+<button @ref="_triggerRef" @onclick="OpenMenu" class="@(IconButton ? "icon" : "")">
+    @MenuButton
+</button>
+
+@if (_renderMenu)
+{
+    <div class="menu @_transformOriginClasses"
+         @ref="_menuRef"
+         style="left:@_menuLeftPx; top:@_menuTopPx;">
+        @MenuContent
+    </div>
+}
+
+@code {
+    private ElementReference _triggerRef;
+    private ElementReference _menuRef;
+    private DotNetObjectReference<Menu>? _dotNetRef;
+
+    private bool _renderMenu = false;
+
+    private string _menuLeftPx = "-9999px";
+    private string _menuTopPx = "-9999px";
+    private string _transformOriginClasses = "";
+
+    [Parameter] public RenderFragment? MenuButton { get; set; }
+    [Parameter] public RenderFragment? MenuContent { get; set; }
+    [Parameter] public bool IconButton { get; set; } = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Js.InvokeVoidAsync("menuHelpers.ensureInit");
+        }
+    }
+
+    private async Task OpenMenu()
+    {
+        if (_renderMenu)
+        {
+            await CloseMenu();
+            return;
+        }
+        
+        _renderMenu = true;
+        StateHasChanged();
+        await Task.Yield(); // wait for menu to render
+
+        var rect = await Js.InvokeAsync<DomRect>("menuHelpers.getBoundingClientRect", _triggerRef);
+        var windowWidth = await Js.InvokeAsync<int>("menuHelpers.getWindowWidth");
+        var windowHeight = await Js.InvokeAsync<int>("menuHelpers.getWindowHeight");
+        var size = await Js.InvokeAsync<Size>("menuHelpers.getElementSize", _menuRef);
+
+        const int padding = 20;
+
+        var menuWidth = size.Width;
+        var menuHeight = size.Height;
+
+        var openLeft = (windowWidth - rect.Left) < (menuWidth + padding);
+        var openUp = (windowHeight - (rect.Top + rect.Height)) < (menuHeight + padding);
+
+        _menuLeftPx = openLeft
+            ? $"{rect.Left - menuWidth + rect.Width}px"
+            : $"{rect.Left}px";
+
+        _menuTopPx = openUp
+            ? $"{rect.Top - menuHeight}px"
+            : $"{rect.Top + rect.Height}px";
+
+        _transformOriginClasses = $"{(openLeft ? "right" : "left")} {(openUp ? "up" : "down")}";
+
+        StateHasChanged();
+        await Task.Yield(); // wait for DOM update with position applied
+
+        _dotNetRef ??= DotNetObjectReference.Create(this);
+        await Js.InvokeVoidAsync("menuHelpers.animateOpen", _menuRef);
+        await Js.InvokeVoidAsync("menuHelpers.registerClickOutside", _menuRef, _triggerRef, _dotNetRef);
+        await Js.InvokeVoidAsync("menuHelpers.registerScrollClose", _menuRef, _dotNetRef);
+    }
+
+    [JSInvokable]
+    public async Task OnClickOutside()
+    {
+        await CloseMenu();
+    }
+
+    private async Task CloseMenu()
+    {
+        await Js.InvokeVoidAsync("menuHelpers.animateClose", _menuRef);
+        _renderMenu = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _dotNetRef?.Dispose();
+    }
+
+    private class DomRect
+    {
+        public double Top { get; set; }
+        public double Left { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
+    }
+
+    private class Size
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
+    }
+}
+
+<script>
+    (() => {
+        const menuHelpers = {
+            ensureInit: () => {},
+
+            getBoundingClientRect: function (element) {
+                const rect = element.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                return {
+                    top: rect.top + scrollTop,
+                    left: rect.left + scrollLeft,
+                    width: rect.width,
+                    height: rect.height
+                };
+            },
+
+            getElementSize: function (element) {
+                return {
+                    width: element.offsetWidth,
+                    height: element.offsetHeight
+                };
+            },
+
+            getWindowWidth: () => window.innerWidth,
+            getWindowHeight: () => window.innerHeight
+        };
+
+        // Shared handlers to ensure only one is active at a time
+        let clickHandler = null;
+        let scrollHandler = null;
+
+        menuHelpers.registerClickOutside = function (menu, trigger, dotnet) {
+            // Remove old click handler if it exists
+            if (clickHandler) {
+                document.removeEventListener("click", clickHandler, true);
+                clickHandler = null;
+            }
+
+            clickHandler = (event) => {
+                if (!menu.contains(event.target) && !trigger.contains(event.target)) {
+                    dotnet.invokeMethodAsync("OnClickOutside");
+                    document.removeEventListener("click", clickHandler, true);
+                    clickHandler = null;
+                }
+            };
+
+            document.addEventListener("click", clickHandler, true);
+        };
+
+        menuHelpers.registerScrollClose = function (menu, dotnet) {
+            // Remove previous scroll handler
+            if (scrollHandler) {
+                document.removeEventListener("scroll", scrollHandler, true);
+                window.removeEventListener("resize", scrollHandler);
+                scrollHandler = null;
+            }
+
+            const initialViewportHeight = window.innerHeight;
+            const initialScrollY = window.scrollY;
+
+            scrollHandler = (event) => {
+                const currentViewportHeight = window.innerHeight;
+                const currentScrollY = window.scrollY;
+
+                const viewportHeightChanged = Math.abs(currentViewportHeight - initialViewportHeight) > 100;
+                const scrolledFarEnough = Math.abs(currentScrollY - initialScrollY) > 50;
+
+                // If caused by keyboard resize, ignore
+                if (viewportHeightChanged && !scrolledFarEnough) {
+                    return;
+                }
+
+                if (!menu.contains(event.target)) {
+                    dotnet.invokeMethodAsync("OnClickOutside");
+                    document.removeEventListener("scroll", scrollHandler, true);
+                    window.removeEventListener("resize", scrollHandler);
+                    scrollHandler = null;
+                }
+            };
+
+            document.addEventListener("scroll", scrollHandler, true);
+            window.addEventListener("resize", scrollHandler);
+        };
+
+        menuHelpers.animateOpen = function (element) {
+            element.getBoundingClientRect(); // force layout
+            element.classList.add("ready");
+
+            element.animate([
+                {
+                    transform: 'scale(0.1) translateZ(0)',
+                    opacity: 0
+                },
+                {
+                    opacity: 1,
+                    offset: 0.4
+                },
+                {
+                    transform: 'scale(1.05) translateZ(0)',
+                    offset: 0.8
+                },
+                {
+                    transform: 'scale(1) translateZ(0)',
+                    opacity: 1
+                }
+            ], {
+                duration: 470,
+                easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+                fill: 'forwards'
+            });
+        };
+
+        menuHelpers.animateClose = function (element) {
+            return new Promise((resolve) => {
+                if (!element) {
+                    resolve();
+                    return;
+                }
+
+                const animation = element.animate([
+                    { opacity: 1, transform: 'scale(1)' },
+                    { opacity: 0, transform: 'scale(0)' }
+                ], {
+                    duration: 200,
+                    easing: 'ease-in-out',
+                    fill: 'forwards'
+                });
+
+                animation.onfinish = resolve;
+            });
+        };
+
+        window.menuHelpers = menuHelpers;
+    })();
+</script>
