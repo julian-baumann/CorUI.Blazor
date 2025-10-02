@@ -1,0 +1,51 @@
+@using CorUI
+
+<div class="demo-container">
+    <h1 class="demo-title">Spinner</h1>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Sizes</h4>
+        <div class="demo-content">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                <Spinner Size="Spinner.SpinnerSize.Small" />
+                <span style="font-size: 0.875rem; color: var(--label-color);">Small</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                <Spinner Size="Spinner.SpinnerSize.Medium" />
+                <span style="font-size: 0.875rem; color: var(--label-color);">Medium</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                <Spinner Size="Spinner.SpinnerSize.Large" />
+                <span style="font-size: 0.875rem; color: var(--label-color);">Large</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Loading State Example</h4>
+        <div class="demo-content">
+            <Spinner Show="@isLoading" Size="Spinner.SpinnerSize.Small" />
+            <span>@(isLoading ? "Loading..." : "Content loaded!")</span>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Button with Spinner</h4>
+        <div class="demo-content">
+            <button class="loading">
+                <Spinner Size="Spinner.SpinnerSize.Small" />
+                <span>Processing...</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(2000);
+        isLoading = false;
+    }
+} 

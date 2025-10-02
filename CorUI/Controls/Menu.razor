@@ -1,0 +1,500 @@
+@using Microsoft.JSInterop
+@implements IDisposable
+@inject IJSRuntime Js
+
+@if (!IsContextMenu)
+{
+    <button @ref="_triggerRef" @onclick="@OpenMenu" class="trigger @(IconButton ? "icon" : "") @(TriggerHidden ? "hidden-trigger" : "")">
+        @MenuButton
+    </button>
+}
+else
+{
+    <div class="menu-trigger" @ref="_triggerRef" 
+         @oncontextmenu:preventDefault 
+         @oncontextmenu="OpenContextMenu"
+         @ontouchstart="OnTouchStart"
+         @ontouchend="OnTouchEnd"
+         @ontouchmove="OnTouchMove">
+        @ContextTrigger
+    </div>
+}
+
+@if (_renderMenu)
+{
+    <Portal>
+        <div class="menu @_transformOriginClasses"
+             @ref="_menuRef"
+             style="left:@_menuLeftPx; top:@_menuTopPx;">
+            <div class="menu-content">
+                @MenuContent
+            </div>
+        </div>
+    </Portal>
+}
+
+@code {
+    private bool TriggerHidden { get; set; }
+    private static Menu? _currentOpenMenu;
+    private ElementReference _triggerRef;
+    private ElementReference _menuRef;
+    private DotNetObjectReference<Menu>? _dotNetRef;
+
+    private bool _renderMenu;
+
+    private string _menuLeftPx = "-9999px";
+    private string _menuTopPx = "-9999px";
+    private string _transformOriginClasses = "";
+
+    private const int LongPressThresholdMs = 500;
+    private DateTime? _touchStartTime;
+    private double _touchStartX;
+    private double _touchStartY;
+    private const int TouchMoveThreshold = 10; // pixels
+    private bool _touchMoved;
+
+    [Parameter] public RenderFragment? MenuButton { get; set; }
+    [Parameter] public RenderFragment? MenuContent { get; set; }
+    [Parameter] public bool IconButton { get; set; }
+    [Parameter] public bool IsContextMenu { get; set; }
+    [Parameter] public bool CloseOnClick { get; set; } = true;
+    [Parameter] public RenderFragment? ContextTrigger { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Js.InvokeVoidAsync("menuHelpers.ensureInit");
+        }
+    }
+
+    private async Task OpenContextMenu(MouseEventArgs e)
+    {
+        var oldMenu = _currentOpenMenu;
+        _currentOpenMenu = this;
+        
+        if (oldMenu != null && oldMenu != this)
+        {
+            _ = oldMenu.CloseMenu();
+        }
+        
+        await OpenMenuAtPosition(e.ClientX, e.ClientY);
+    }
+
+    private async Task OpenMenu()
+    {
+        if (_renderMenu)
+        {
+            await CloseMenu();
+            return;
+        }
+
+        var oldMenu = _currentOpenMenu;
+        _currentOpenMenu = this;
+        
+        if (oldMenu != null && oldMenu != this)
+        {
+            _ = oldMenu.CloseMenu();
+        }
+        
+        _renderMenu = true;
+        StateHasChanged();
+        await Task.Yield(); // wait for the menu to render
+
+        var rect = await Js.InvokeAsync<DomRect>("menuHelpers.getBoundingClientRect", _triggerRef);
+        await PositionMenu(rect.Left, rect.Top, rect.Width, _triggerRef);
+    }
+
+    private async Task OpenMenuAtPosition(double x, double y)
+    {
+        _renderMenu = true;
+        StateHasChanged();
+        await Task.Yield();
+
+        await PositionMenu(x, y);
+    }
+
+    private async Task PositionMenu(double x, double y, double triggerWidth = 0, ElementReference? triggerReference = null)
+    {
+        TriggerHidden = true;
+
+        var windowWidth = await Js.InvokeAsync<int>("menuHelpers.getWindowWidth");
+        var windowHeight = await Js.InvokeAsync<int>("menuHelpers.getWindowHeight");
+        var size = await Js.InvokeAsync<Size>("menuHelpers.getElementSize", _menuRef);
+
+        const int padding = 0;
+
+        var menuWidth = size.Width;
+        var menuHeight = size.Height;
+
+        var openLeft = (windowWidth - x) < (menuWidth + padding);
+        var openUp = (windowHeight - y) < (menuHeight + padding);
+
+        _menuLeftPx = openLeft
+            ? $"{x - menuWidth + triggerWidth}px"
+            : $"{x}px";
+
+        _menuTopPx = openUp
+            ? $"{y - menuHeight}px"
+            : $"{y}px";
+
+        _transformOriginClasses = $"{(openLeft ? "right" : "left")} {(openUp ? "up" : "down")}";
+
+        StateHasChanged();
+        await Task.Yield();
+
+        _dotNetRef ??= DotNetObjectReference.Create(this);
+        if (triggerReference != null)
+        {
+            await Js.InvokeVoidAsync("menuHelpers.animateOpenWithReference", _menuRef, triggerReference);
+        }
+        else
+        {
+            await Js.InvokeVoidAsync("menuHelpers.animateOpen", _menuRef);
+        }
+        await Js.InvokeVoidAsync("menuHelpers.registerClickOutside", CloseOnClick, _menuRef, _triggerRef, _dotNetRef);
+        await Js.InvokeVoidAsync("menuHelpers.registerScrollClose", _menuRef, _dotNetRef);
+    }
+
+    [JSInvokable]
+    public async Task OnClickOutside()
+    {
+        await CloseMenu();
+    }
+
+    private async Task CloseMenu()
+    {
+        if (!_renderMenu)
+        {
+            return;
+        }
+        
+        TriggerHidden = false;
+        StateHasChanged();
+        
+        await Js.InvokeVoidAsync("menuHelpers.animateClose", _menuRef);
+        _renderMenu = false;
+        
+        if (_currentOpenMenu == this)
+        {
+            _currentOpenMenu = null;
+        }
+        
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _dotNetRef?.Dispose();
+        if (_currentOpenMenu == this)
+        {
+            _currentOpenMenu = null;
+        }
+    }
+
+    private void OnTouchStart(TouchEventArgs e)
+    {
+        _touchStartTime = DateTime.Now;
+        _touchStartX = e.Touches[0].ClientX;
+        _touchStartY = e.Touches[0].ClientY;
+        _touchMoved = false;
+    }
+
+    private void OnTouchMove(TouchEventArgs e)
+    {
+        if (_touchStartTime == null) return;
+        
+        var deltaX = Math.Abs(e.Touches[0].ClientX - _touchStartX);
+        var deltaY = Math.Abs(e.Touches[0].ClientY - _touchStartY);
+        
+        if (deltaX > TouchMoveThreshold || deltaY > TouchMoveThreshold)
+        {
+            _touchMoved = true;
+            _touchStartTime = null;
+        }
+    }
+
+    private async Task OnTouchEnd(TouchEventArgs e)
+    {
+        if (_touchStartTime == null || _touchMoved) return;
+        
+        var touchDuration = DateTime.Now - _touchStartTime.Value;
+        if (touchDuration.TotalMilliseconds >= LongPressThresholdMs)
+        {
+            await OpenMenuAtPosition(_touchStartX, _touchStartY);
+        }
+        _touchStartTime = null;
+    }
+
+    private class DomRect
+    {
+        public double Top { get; set; }
+        public double Left { get; set; }
+        public double Width { get; set; }
+        public double Height { get; set; }
+    }
+
+    private class Size
+    {
+        public int Width { get; set; }
+        public int Height { get; set; }
+    }
+}
+
+<script>
+    (() => {
+        let lastTrigger = null;
+
+        const menuHelpers = {
+            ensureInit: () => {
+            },
+
+            getBoundingClientRect: function (element) {
+                const rect = element.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                return {
+                    top: rect.top + scrollTop,
+                    left: rect.left + scrollLeft,
+                    width: rect.width,
+                    height: rect.height
+                };
+            },
+
+            getElementSize: function (element) {
+                return {
+                    width: element.offsetWidth,
+                    height: element.offsetHeight
+                };
+            },
+
+            getWindowWidth: () => window.innerWidth,
+            getWindowHeight: () => window.innerHeight
+        };
+
+        // Shared handlers to ensure only one is active at a time
+        let clickHandler = null;
+        let scrollHandler = null;
+
+        menuHelpers.registerClickOutside = function (shouldCloseOnClick, menu, trigger, dotnet) {
+            // Remove the old click handler if it exists
+            if (clickHandler) {
+                document.removeEventListener("click", clickHandler, true);
+                clickHandler = null;
+            }
+
+            clickHandler = (event) => {
+                if (shouldCloseOnClick || (!menu.contains(event.target) && !trigger.contains(event.target))) {
+                    dotnet.invokeMethodAsync("OnClickOutside");
+                    document.removeEventListener("click", clickHandler, true);
+                    clickHandler = null;
+                }
+            };
+
+            document.addEventListener("click", clickHandler, true);
+        };
+
+        menuHelpers.registerScrollClose = function (menu, dotnet) {
+            // Remove the previous scroll handler
+            if (scrollHandler) {
+                document.removeEventListener("scroll", scrollHandler, true);
+                window.removeEventListener("resize", scrollHandler);
+                scrollHandler = null;
+            }
+
+            const initialViewportHeight = window.innerHeight;
+            const initialScrollY = window.scrollY;
+
+            scrollHandler = (event) => {
+                const currentViewportHeight = window.innerHeight;
+                const currentScrollY = window.scrollY;
+
+                const viewportHeightChanged = Math.abs(currentViewportHeight - initialViewportHeight) > 100;
+                const scrolledFarEnough = Math.abs(currentScrollY - initialScrollY) > 50;
+
+                // If caused by keyboard resize, ignore
+                if (viewportHeightChanged && !scrolledFarEnough) {
+                    return;
+                }
+
+                if (!menu.contains(event.target)) {
+                    dotnet.invokeMethodAsync("OnClickOutside");
+                    document.removeEventListener("scroll", scrollHandler, true);
+                    window.removeEventListener("resize", scrollHandler);
+                    scrollHandler = null;
+                }
+            };
+
+            document.addEventListener("scroll", scrollHandler, true);
+            window.addEventListener("resize", scrollHandler);
+        };
+
+        menuHelpers.animateOpen = function (element) {
+            element.getBoundingClientRect(); // force layout
+            element.classList.add("ready");
+
+            element.animate([
+                {
+                    transform: 'scale(0.1) translateZ(0)',
+                    opacity: 0
+                },
+                {
+                    opacity: 1,
+                    offset: 0.4
+                },
+                {
+                    transform: 'scale(1.05) translateZ(0)',
+                    offset: 0.8
+                },
+                {
+                    transform: 'scale(1) translateZ(0)',
+                    opacity: 1
+                }
+            ], {
+                duration: 470,
+                easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+                fill: 'forwards'
+            });
+        };
+
+        menuHelpers.animateOpenWithReference = function (element, trigger) {
+            lastTrigger = trigger;
+
+            const triggerRect = trigger.getBoundingClientRect();
+            const menuRect = element.getBoundingClientRect();
+
+            const scaleX = triggerRect.width / menuRect.width;
+            const scaleY = triggerRect.height / menuRect.height;
+
+            const translateX = triggerRect.left - menuRect.left;
+            const translateY = triggerRect.top - menuRect.top;
+
+            const initialBorderRadius = getComputedStyle(trigger).borderRadius || "14px";
+            const finalBorderRadius = getComputedStyle(element).borderRadius || "14px";
+            
+            const initialBackground = getComputedStyle(trigger).backgroundColor || 'white';
+            const finalBackground = getComputedStyle(element).backgroundColor || 'white';
+
+            element.style.transformOrigin = 'top left';
+            element.style.opacity = 0;
+            element.style.borderRadius = initialBorderRadius;
+            element.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`;
+
+            // Force layout
+            element.getBoundingClientRect();
+
+            element.classList.add("ready");
+
+            const animation = element.animate([
+                {
+                    transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`,
+                    borderRadius: initialBorderRadius,
+                    backgroundColor: initialBackground,
+                    opacity: 0
+                },
+                {
+                    transform: 'translate(0, 0) scale(1)',
+                    borderRadius: finalBorderRadius,
+                    backgroundColor: finalBackground,
+                    opacity: 1
+                }
+            ], {
+                duration: 270,
+                easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+                fill: 'forwards'
+            });
+
+            animation.onfinish = () => {
+                element.style.transform = '';
+                element.style.opacity = '';
+                element.style.borderRadius = finalBorderRadius;
+            };
+        };
+
+        menuHelpers.animateCloseWithoutTrigger = function (element) {
+            return new Promise((resolve) => {
+                if (!element) {
+                    resolve();
+                    return;
+                }
+
+                const animation = element.animate([
+                    { opacity: 1, transform: 'scale(1)' },
+                    { opacity: 0, transform: 'scale(0)' }
+                ], {
+                    duration: 200,
+                    easing: 'ease-in-out',
+                    fill: 'forwards'
+                });
+
+                animation.onfinish = resolve;
+            });
+        };
+
+        menuHelpers.animateClose = function (element) {
+            return new Promise((resolve) => {
+                if (!element || !lastTrigger) {
+                    return menuHelpers.animateCloseWithoutTrigger(element);
+                }
+
+                const triggerRect = lastTrigger.getBoundingClientRect();
+                const menuRect = element.getBoundingClientRect();
+
+                const scaleX = triggerRect.width / menuRect.width;
+                const scaleY = triggerRect.height / menuRect.height;
+
+                const translateX = triggerRect.left - menuRect.left;
+                const translateY = triggerRect.top - menuRect.top;
+
+                const triggerStyles = getComputedStyle(lastTrigger);
+                const menuStyles = getComputedStyle(element);
+
+                const finalBorderRadius = triggerStyles.borderRadius || "14px";
+                const initialBorderRadius = menuStyles.borderRadius || "14px";
+                const initialBorder = menuStyles.border;
+
+                const initialBackground = menuStyles.backgroundColor || 'white';
+                const finalBackground = triggerStyles.backgroundColor || 'white'; // fallback if transparent
+
+                element.style.backgroundColor = initialBackground;
+
+                element.style.transformOrigin = 'top left';
+                element.style.borderRadius = initialBorderRadius;
+                element.classList.add("closing");
+
+                const animation = element.animate([
+                    {
+                        transform: 'translate(0, 0) scale(1)',
+                        borderRadius: initialBorderRadius,
+                        backgroundColor: initialBackground,
+                        border: initialBorder,
+                        opacity: 1
+                    },
+                    {
+                        transform: `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`,
+                        borderRadius: finalBorderRadius,
+                        backgroundColor: finalBackground,
+                        boxShadow: 'none',
+                        border: "0px solid transparent",
+                        opacity: 0
+                    }
+                ], {
+                    duration: 300,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                    fill: 'forwards'
+                });
+
+                animation.onfinish = () => {
+                    // Reset everything
+                    element.style.transform = '';
+                    element.style.opacity = '';
+                    element.style.borderRadius = '';
+                    lastTrigger = null;
+                    resolve();
+                };
+            });
+        };
+
+        window.menuHelpers = menuHelpers;
+    })();
+</script>

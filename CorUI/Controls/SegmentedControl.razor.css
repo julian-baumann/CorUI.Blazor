@@ -1,0 +1,56 @@
+.segmented-control {
+    display: inline-block;
+    padding: 2px;
+}
+
+.segmented-control-container {
+    position: relative;
+    background: var(--segmented-bg);
+    border-radius: 50px;
+    padding: 2px;
+    box-shadow: var(--segmented-shadow);
+    border: 1px solid var(--segmented-border);
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+}
+
+.segmented-option {
+    position: relative;
+    z-index: 1;
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    color: var(--segmented-text);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    min-width: 80px;
+    text-align: center;
+    box-shadow: none !important;
+}
+
+.segmented-option:first-of-type {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.segmented-option:hover:not(.selected) {
+    color: var(--segmented-text-selected);
+}
+
+.segmented-option.selected {
+    color: var(--segmented-text-selected);
+}
+
+.pillow {
+    top: 2px;
+    bottom: 2px;
+    grid-column: 1;
+    grid-row: 1;
+    background: var(--segmented-pillow);
+    border-radius: 50px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+} 

@@ -1,0 +1,27 @@
+<div class="header @(IsMac ? "mac" : "")">
+    <div class="title">
+        @Title   
+    </div>
+    
+    <div class="toolbar">
+        @if (ShowBackButton)
+        {
+            <button class="nav rounded" onclick="history.back();">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+        }
+
+        <div class="header-content">
+            @ChildContent
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public bool ShowBackButton { get; set; }
+
+    private static bool IsMac => OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst();
+}

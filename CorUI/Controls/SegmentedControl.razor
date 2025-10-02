@@ -1,0 +1,57 @@
+<div class="segmented-control">
+    <div class="segmented-control-container" style="@($"--option-count: {_totalOptions}")">
+        @foreach (var option in Options)
+        {
+            var isSelected = option.Equals(SelectedOption);
+            <div class="segmented-option @(isSelected ? "selected" : "")"
+                    @onclick="() => OnOptionSelected(option)">
+                @option
+            </div>
+        }
+        <div class="pillow" style="@GetPillowStyle()"></div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<string> Options { get; set; } = new List<string>();
+
+    [Parameter]
+    public string? SelectedOption { get; set; }
+
+    [Parameter]
+    public EventCallback<string> SelectedOptionChanged { get; set; }
+
+    private readonly Dictionary<string, int> _optionIndices = new();
+    private int _totalOptions;
+
+    protected override void OnParametersSet()
+    {
+        _optionIndices.Clear();
+        var index = 0;
+        foreach (var option in Options)
+        {
+            _optionIndices[option] = index++;
+        }
+        _totalOptions = index;
+    }
+
+    private async Task OnOptionSelected(string option)
+    {
+        if (option != SelectedOption)
+        {
+            SelectedOption = option;
+            await SelectedOptionChanged.InvokeAsync(option);
+        }
+    }
+
+    private string GetPillowStyle()
+    {
+        if (string.IsNullOrEmpty(SelectedOption) || !_optionIndices.ContainsKey(SelectedOption))
+            return "display: none;";
+
+        var position = _optionIndices[SelectedOption];
+        var translateX = $"translateX({position * 100}%)";
+        return $"transform: {translateX};";
+    }
+}

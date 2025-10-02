@@ -1,0 +1,38 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <UsingMicrosoftNETSdkRazor>true</UsingMicrosoftNETSdkRazor>
+    <StaticWebAssetsEnabled>true</StaticWebAssetsEnabled>
+  </PropertyGroup>
+
+  <Target Name="PopulateBundleStaticWebAssets"
+          BeforeTargets="Codesign"
+          DependsOnTargets="ResolveProjectReferences;StaticWebAssetsPrepareForRun;StaticWebAssetsPrepareForPublish;LoadStaticWebAssetsPublishManifest"
+          Condition="'$(DesignTimeBuild)' != 'true' and Exists('$(AppBundleDir)') and '$(AppBundleDir)' != ''">
+    <PropertyGroup>
+      <_BundleResourceRoot>$([System.IO.Path]::Combine('$(AppBundleDir)', 'Contents', 'Resources'))</_BundleResourceRoot>
+      <_BundleWebRoot>$([System.IO.Path]::Combine('$(_BundleResourceRoot)', 'wwwroot'))</_BundleWebRoot>
+    </PropertyGroup>
+
+    <ComputeStaticWebAssetsTargetPaths Assets="@(StaticWebAsset)" PathPrefix="wwwroot">
+      <Output TaskParameter="AssetsWithTargetPath" ItemName="_StaticWebAssetWithTargetPath" />
+    </ComputeStaticWebAssetsTargetPaths>
+
+    <Error Text="Static web assets were not resolved for TestApp.macOS. Ensure the Blazor app builds successfully."
+           Condition="'@(_StaticWebAssetWithTargetPath)' == ''" />
+
+    <ItemGroup>
+      <_StaticWebAssetCopy Include="@(_StaticWebAssetWithTargetPath)">
+        <Destination>$([System.IO.Path]::Combine('$(_BundleResourceRoot)', '%(TargetPath)'))</Destination>
+        <DestinationDir>$([System.IO.Path]::GetDirectoryName($([System.IO.Path]::Combine('$(_BundleResourceRoot)', '%(TargetPath)'))))</DestinationDir>
+      </_StaticWebAssetCopy>
+    </ItemGroup>
+
+    <MakeDir Directories="@(_StaticWebAssetCopy->'%(DestinationDir)')" />
+    <Copy SourceFiles="@(_StaticWebAssetCopy->'%(Identity)')"
+          DestinationFiles="@(_StaticWebAssetCopy->'%(Destination)')"
+          SkipUnchangedFiles="true" />
+
+    <Message Importance="High"
+             Text="Bundled static web assets into $(_BundleWebRoot)" />
+  </Target>
+</Project>

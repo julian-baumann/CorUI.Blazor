@@ -1,0 +1,52 @@
+@using CorUI
+
+<div class="demo-container">
+    <h1 class="demo-title">Toggle</h1>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Basic Toggle</h4>
+        <div class="demo-content">
+            <Toggle Title="Enable feature" />
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">With State</h4>
+        <div class="demo-content" style="flex-direction: column; align-items: flex-start;">
+            <Toggle @bind-Checked="isEnabled" Title="Enable notifications" />
+            <span style="color: var(--label-color); font-size: 0.875rem;">
+                Notifications are @(isEnabled ? "enabled" : "disabled")
+            </span>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Settings Example</h4>
+        <div class="demo-content" style="flex-direction: column; align-items: stretch; max-width: 400px;">
+            <List>
+                <ListItem>
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <div style="display: flex; flex-direction: column;">
+                            <span>Dark Mode</span>
+                            <span style="font-size: 0.875rem; color: var(--label-color);">Use system appearance</span>
+                        </div>
+                        <Toggle />
+                    </div>
+                </ListItem>
+                <ListItem>
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <div style="display: flex; flex-direction: column;">
+                            <span>Notifications</span>
+                            <span style="font-size: 0.875rem; color: var(--label-color);">Show alerts and badges</span>
+                        </div>
+                        <Toggle />
+                    </div>
+                </ListItem>
+            </List>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool isEnabled = true;
+} 

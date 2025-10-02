@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <StaticWebAssetsEnabled>true</StaticWebAssetsEnabled>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.9"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CorUI\CorUI.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\background.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\exampleJsInterop.js" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Demos\ButtonDemo.razor" />
+      <AdditionalFiles Include="Components\Demos\CardDemo.razor" />
+      <AdditionalFiles Include="Components\Demos\DialogDemo.razor" />
+      <AdditionalFiles Include="Components\Demos\HeaderDemo.razor" />
+      <AdditionalFiles Include="Components\Demos\InputGroupDemo.razor" />
+      <AdditionalFiles Include="Components\Demos\ListDemo.razor" />
+      <AdditionalFiles Include="Components\Demos\MenuDemo.razor" />
+      <AdditionalFiles Include="Components\Demos\ProgressBarDemo.razor" />
+      <AdditionalFiles Include="Components\Demos\SegmentedControlDemo.razor" />
+      <AdditionalFiles Include="Components\Demos\SpinnerDemo.razor" />
+      <AdditionalFiles Include="Components\Demos\ToggleDemo.razor" />
+      <AdditionalFiles Include="Layout\MainLayout.razor" />
+      <AdditionalFiles Include="Pages\Home.razor" />
+    </ItemGroup>
+
+</Project>

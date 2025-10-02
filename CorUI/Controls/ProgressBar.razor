@@ -1,0 +1,13 @@
+<div class="progress-bar-container">
+    <div class="progress-bar-track">
+        <div class="progress-bar-fill" style="width:@Percent%"></div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public double Value { get; set; }
+    [Parameter] public double Min { get; set; }
+    [Parameter] public double Max { get; set; } = 100;
+
+    private double Percent => Math.Clamp((Value - Min) / (Max - Min) * 100, 0, 100);
+} 

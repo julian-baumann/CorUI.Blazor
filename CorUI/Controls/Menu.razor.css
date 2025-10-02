@@ -1,0 +1,51 @@
+.menu {
+    position: fixed;
+    background: var(--menu-background);
+    z-index: 10000;
+    max-width: 300px;
+    max-height: 500px;
+    overflow: auto;
+    border-radius: 20px;
+    box-shadow: var(--menu-shadow);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    -webkit-font-smoothing: antialiased;
+    padding: 10px;
+    width: auto;
+    visibility: hidden;
+    border: 1px solid var(--menu-border-color);
+    backdrop-filter: blur(20px) saturate(150%) brightness(var(--menu-brightness));
+    -webkit-backdrop-filter: blur(20px) saturate(150%) brightness(var(--menu-brightness));
+    pointer-events: auto;
+    transition: background-color 0.3s ease;
+}
+
+.menu-trigger {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.menu.left.down  { transform-origin: top left; }
+.menu.right.down { transform-origin: top right; }
+.menu.left.up    { transform-origin: bottom left; }
+.menu.right.up   { transform-origin: bottom right; }
+
+.menu.ready {
+    visibility: visible;
+}
+
+.trigger {
+    /*transition: opacity 0.2s ease-in-out;*/
+}
+
+.hidden-trigger {
+    transition: opacity 0.2s ease-in-out;
+    opacity: 0;
+}
+
+.closing .menu-content {
+    transition: opacity 0.2s ease-in-out;
+    opacity: 0;
+}

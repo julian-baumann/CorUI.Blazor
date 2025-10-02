@@ -1,0 +1,49 @@
+@using CorUI
+
+<div class="demo-container">
+    <h1 class="demo-title">Segmented Control</h1>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">View Type</h4>
+        <div class="demo-content">
+            <SegmentedControl 
+                Options="@(new[] { "Grid", "List", "Gallery" })"
+                @bind-SelectedOption="viewType" />
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Time Period</h4>
+        <div class="demo-content">
+            <SegmentedControl 
+                Options="@(new[] { "Day", "Week", "Month", "Year" })"
+                @bind-SelectedOption="timeframe" />
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Theme Selection</h4>
+        <div class="demo-content">
+            <SegmentedControl 
+                Options="@(new[] { "Light", "Dark", "System" })"
+                @bind-SelectedOption="theme" />
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Selected Values</h4>
+        <div class="demo-content">
+            <ul style="list-style: none; margin: 0; padding: 0;">
+                <li>View Type: @viewType</li>
+                <li>Time Period: @timeframe</li>
+                <li>Theme: @theme</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string viewType = "Grid";
+    private string timeframe = "Day";
+    private string theme = "Light";
+} 

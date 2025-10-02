@@ -1,0 +1,33 @@
+﻿.page {
+    overflow: hidden;
+    display: flex;
+    height: 100%;
+}
+
+.sidebar {
+    flex: 1;
+    height: 100%;
+    background: var(--sidebar-background);
+    display: flex;
+    flex-direction: column;
+    padding: env(safe-area-inset-top) 10px 10px;
+}
+
+.sidebar .header {
+    display: flex;
+}
+
+.sidebar .header .left, .right {
+    flex: 1;
+}
+
+.right {
+    display: flex;
+    justify-content: end;
+}
+
+.content {
+    flex: 1;
+    /*padding: calc(env(safe-area-inset-top) + 20px) 20px 20px;*/
+    overflow: auto;
+}

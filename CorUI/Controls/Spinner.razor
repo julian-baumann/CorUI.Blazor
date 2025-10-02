@@ -1,0 +1,31 @@
+@if (Show)
+{
+    <div class="@CssClass">
+        <div class="spinner"></div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Show { get; set; } = true;
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public SpinnerSize Size { get; set; } = SpinnerSize.Medium;
+    
+    private string CssClass => $"spinner-container {SizeClass} {Class}".Trim();
+    
+    private string SizeClass => Size switch
+    {
+        SpinnerSize.Small => "small",
+        SpinnerSize.Medium => "medium",
+        SpinnerSize.Large => "large",
+        _ => "medium"
+    };
+}
+
+@code {
+    public enum SpinnerSize
+    {
+        Small,
+        Medium,
+        Large
+    }
+} 

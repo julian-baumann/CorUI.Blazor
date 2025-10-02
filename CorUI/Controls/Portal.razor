@@ -1,0 +1,71 @@
+@using Microsoft.JSInterop
+@implements IAsyncDisposable
+
+@if (_isInitialized)
+{
+    @ChildContent
+}
+
+@code {
+    [Inject] private IJSRuntime Js { get; set; } = null!;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback AfterContentRendered { get; set; }
+    
+    private bool _isInitialized;
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await InitializePortalAsync();
+        }
+    }
+    
+    private async Task InitializePortalAsync()
+    {
+        await Js.InvokeVoidAsync("portalHelpers.ensureInit");
+        _isInitialized = true;
+        StateHasChanged();
+        await AfterContentRendered.InvokeAsync();
+    }
+    
+    public async ValueTask DisposeAsync()
+    {
+        if (_isInitialized)
+        {
+            await Js.InvokeVoidAsync("portalHelpers.cleanup");
+        }
+    }
+}
+
+<script>
+    (() => {
+        const portalHelpers = {
+            portalRoot: null,
+            
+            ensureInit: function() {
+                if (!this.portalRoot) {
+                    this.portalRoot = document.createElement('div');
+                    this.portalRoot.id = 'portal-root';
+                    this.portalRoot.style.position = 'fixed';
+                    this.portalRoot.style.left = '0';
+                    this.portalRoot.style.top = '0';
+                    this.portalRoot.style.width = '100%';
+                    this.portalRoot.style.height = '0';
+                    this.portalRoot.style.zIndex = '9999';
+                    this.portalRoot.style.pointerEvents = 'none';
+                    document.body.appendChild(this.portalRoot);
+                }
+            },
+            
+            cleanup: function() {
+                if (this.portalRoot) {
+                    document.body.removeChild(this.portalRoot);
+                    this.portalRoot = null;
+                }
+            }
+        };
+        
+        window.portalHelpers = portalHelpers;
+    })();
+</script> 

@@ -1,0 +1,35 @@
+.header {
+    width: 100%;
+    background: var(--nav-bar-background);
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    padding: 5px 10px;
+    border-bottom: 1px solid var(--divider-color);
+}
+
+.title {
+    font-size: 0.9em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*.mac {*/
+/*    padding-left: 75px;*/
+/*}*/
+
+.header-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}

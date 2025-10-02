@@ -1,13 +1,19 @@
 :root {
     --background: #000000;
     --text-color: #ffffff;
-    --nav-bar-background: #181718;
+    --nav-bar-background: #282828;
+    --sidebar-background: #282828;
     --navigation-button-background: #1168F5;
     --card-header-background: var(--nav-bar-background);
     --card-border-color: #3f3f46;
     --divider-color: rgba(188, 188, 188, 0.44);
-    --menu-background: rgba(255, 255, 255, 0.05);
-    --menu-border-color: rgba(255, 255, 255, 0.08);
+    --menu-background: rgba(50, 50, 50, 0.49);
+    --menu-border-color: rgba(255, 255, 255, 0.1);
+    --menu-brightness: 86%;
+    --menu-shadow:
+            0 0 1px rgba(0, 0, 0, 0.5),
+            0 3px 6px rgba(0, 0, 0, 0.4),
+            0 8px 20px rgba(0, 0, 0, 0.4);
 
     --glass-bg: rgba(30, 30, 30, 0.5);
     --container-bg: rgba(50, 50, 50, 0.4);
@@ -26,4 +32,30 @@
     --segmented-border: transparent;
     --segmented-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     --segmented-hover: rgba(120, 120, 128, 0.36);
+
+    /* Spinner Variables */
+    --spinner-color: rgb(10, 132, 255);
+    --spinner-track-color: rgba(255, 255, 255, 0.15);
+
+    /* Button Variables */
+    --button-bg: rgba(120, 120, 128, 0.32);
+    --button-hover-bg: rgba(120, 120, 128, 0.36);
+    --button-active-bg: rgba(120, 120, 128, 0.40);
+    --button-text: rgba(255, 255, 255, 0.85);
+    --button-border: transparent;
+
+    --primary-button-bg: rgb(10, 132, 255);
+    --primary-button-hover-bg: rgb(20, 142, 255);
+    --primary-button-active-bg: rgb(30, 152, 255);
+    --primary-button-text: white;
+    --primary-button-border: transparent;
+
+    --danger-button-bg: rgb(255, 69, 58);
+    --danger-button-hover-bg: rgb(255, 79, 68);
+    --danger-button-active-bg: rgb(255, 89, 78);
+    --danger-button-text: white;
+    --danger-button-border: transparent;
+
+    --select-background: rgba(62, 106, 230, 0.75);
+    --select-text-color: #ffffff;
 }

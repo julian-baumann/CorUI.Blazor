@@ -1,0 +1,26 @@
+<svg width="30" height="30" viewBox="0 0 30 30" 
+     class="circular-progress @CssClass"
+     style="--progress:@Percent;">
+    <circle class="bg" cx="15" cy="15" r="10"></circle>
+    <circle class="fg" cx="15" cy="15" r="10"></circle>
+</svg>
+
+@code {
+    [Parameter] public double Value { get; set; }
+    [Parameter] public double Min { get; set; }
+    [Parameter] public double Max { get; set; } = 100;
+
+    [Parameter] public Spinner.SpinnerSize Size { get; set; } = Spinner.SpinnerSize.Medium;
+    
+    private string CssClass => $"spinner-container {SizeClass}".Trim();
+    
+    private string SizeClass => Size switch
+    {
+        Spinner.SpinnerSize.Small => "small",
+        Spinner.SpinnerSize.Medium => "medium",
+        Spinner.SpinnerSize.Large => "large",
+        _ => "medium"
+    };
+
+    private double Percent => Math.Clamp((Value - Min) / (Max - Min) * 100, 0, 100);
+}

@@ -1,0 +1,56 @@
+@using CorUI
+
+<div class="demo-container">
+    <h1 class="demo-title">Card</h1>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Basic Card</h4>
+        <div class="demo-content">
+            <Card>
+                <h3>Card Title</h3>
+                <p>This is a basic card with some content. Cards can contain any type of content, including text, images, and other components.</p>
+            </Card>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Interactive Card</h4>
+        <div class="demo-content">
+            <Card>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <h3>Settings</h3>
+                    <InputGroup Title="Name">
+                        <input placeholder="Enter your name" />
+                    </InputGroup>
+                    <InputGroup Title="Notifications">
+                        <Toggle Title="Enable notifications" />
+                    </InputGroup>
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button class="primary">Save Changes</button>
+                    </div>
+                </div>
+            </Card>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Card Grid</h4>
+        <div class="demo-content" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); width: 100%; gap: 1rem;">
+            <Card>
+                <h3>Analytics</h3>
+                <p>View detailed statistics and insights about your application's performance.</p>
+                <button>View Details</button>
+            </Card>
+            <Card>
+                <h3>Users</h3>
+                <p>Manage user accounts, permissions, and access controls.</p>
+                <button>Manage Users</button>
+            </Card>
+            <Card>
+                <h3>Settings</h3>
+                <p>Configure application settings and preferences.</p>
+                <button>Open Settings</button>
+            </Card>
+        </div>
+    </div>
+</div> 
