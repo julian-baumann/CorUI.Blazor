@@ -1,13 +1,17 @@
+using CorUI.macOS.Services;
+using CorUI.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CorUI.macOS;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddMacOS(this IServiceCollection services, BlazorWebViewOptions options)
+    // ReSharper disable once InconsistentNaming
+    public static IServiceCollection AddMacOS(this IServiceCollection services)
     {
         return services
-            .AddBlazorWebView()
-            .AddSingleton(options);
+            .AddSingleton<IViewStorage, ViewStorage>()
+            .AddHostedService<MacOSApplication>()
+            .AddBlazorWebView();
     }
 }

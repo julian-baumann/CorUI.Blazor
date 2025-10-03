@@ -3,6 +3,11 @@
 
 <PageTitle>CorUI Kitchen Sink</PageTitle>
 
+<Toolbar ShowBackButton="false" Title="CorUI Gallery">
+    <div class="spacer"></div>
+    <button class="primary small">Save</button>
+</Toolbar>
+
 <NavigationSplitView SideBarWidth="220">
     <Sidebar>
         <NavigationButton Active="@(activeSection == "Button")" Click="@(() => activeSection = "Button")">Button</NavigationButton>

@@ -1,4 +1,4 @@
-namespace CorUI.macOS;
+namespace CorUI;
 
 public record BlazorWebViewOptions
 {

@@ -18,7 +18,7 @@
 .segmented-option {
     position: relative;
     z-index: 1;
-    padding: 8px 16px;
+    padding: 6px 10px;
     border: none;
     background: transparent;
     color: var(--segmented-text);
@@ -29,6 +29,7 @@
     min-width: 80px;
     text-align: center;
     box-shadow: none !important;
+    align-self: center;
 }
 
 .segmented-option:first-of-type {

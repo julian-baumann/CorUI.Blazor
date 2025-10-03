@@ -30,7 +30,7 @@
     <MakeDir Directories="@(_StaticWebAssetCopy->'%(DestinationDir)')" />
     <Copy SourceFiles="@(_StaticWebAssetCopy->'%(Identity)')"
           DestinationFiles="@(_StaticWebAssetCopy->'%(Destination)')"
-          SkipUnchangedFiles="true" />
+          SkipUnchangedFiles="false" />
 
     <Message Importance="High"
              Text="Bundled static web assets into $(_BundleWebRoot)" />

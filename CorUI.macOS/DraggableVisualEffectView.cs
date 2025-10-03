@@ -1,13 +1,10 @@
+using System.Runtime.InteropServices;
+
 namespace CorUI.macOS;
 
-internal sealed class DraggableVisualEffectView : NSVisualEffectView
+internal sealed class DraggableVisualEffectView(CGRect frame, Window window) : NSVisualEffectView(frame)
 {
-    internal static readonly nfloat DefaultDragRegionHeight = 60f;
+    internal readonly NFloat DefaultDragRegionHeight = window.MacWindowOptions.MacTrafficLightStyle == MacTrafficLightStyle.Expanded ? 52 : 32;
 
-    public DraggableVisualEffectView(CGRect frame) : base(frame)
-    {
-        DragRegionHeight = DefaultDragRegionHeight;
-    }
-
-    public nfloat DragRegionHeight { get; set; }
+    public NFloat DragRegionHeight => DefaultDragRegionHeight;
 }

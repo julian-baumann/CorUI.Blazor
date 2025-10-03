@@ -21,6 +21,8 @@
     max-width: 800px;
     max-height: 900px;
     background: var(--background);
+    border: 1px solid var(--divider-color);
+    box-shadow: var(--menu-shadow);
     border-radius: 20px;
     padding: 10px;
     overflow: hidden;
@@ -42,6 +44,7 @@
 .dialog-content {
     padding: 0 10px 10px 10px;
     overflow: auto;
+    height: 100%;
 }
 
 .backdrop.open {

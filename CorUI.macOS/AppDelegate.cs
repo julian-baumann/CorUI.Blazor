@@ -1,9 +1,10 @@
+using Microsoft.Extensions.DependencyInjection;
 using ObjCRuntime;
 
 namespace CorUI.macOS;
 
 [Register("AppDelegate")]
-public sealed class AppDelegate : NSApplicationDelegate
+public sealed class AppDelegate(IServiceProvider serviceProvider) : NSApplicationDelegate
 {
     private readonly HashSet<BlazorWindowController> _openWindows = new();
 
@@ -27,7 +28,10 @@ public sealed class AppDelegate : NSApplicationDelegate
 
     private void CreateAndShowMainWindow()
     {
-        var controller = new BlazorWindowController(OnWindowClosed);
+        var corApp = serviceProvider.GetRequiredService<ICorUIApplication>();
+
+        var appStartWindow = corApp.StartWindow;
+        var controller = new BlazorWindowController(OnWindowClosed, appStartWindow, serviceProvider);
         _openWindows.Add(controller);
         controller.ShowWindow(this);
     }

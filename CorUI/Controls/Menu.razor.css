@@ -27,17 +27,24 @@
     user-select: none;
 }
 
-.menu.left.down  { transform-origin: top left; }
-.menu.right.down { transform-origin: top right; }
-.menu.left.up    { transform-origin: bottom left; }
-.menu.right.up   { transform-origin: bottom right; }
+.menu.left.down {
+    transform-origin: top left;
+}
+
+.menu.right.down {
+    transform-origin: top right;
+}
+
+.menu.left.up {
+    transform-origin: bottom left;
+}
+
+.menu.right.up {
+    transform-origin: bottom right;
+}
 
 .menu.ready {
     visibility: visible;
-}
-
-.trigger {
-    /*transition: opacity 0.2s ease-in-out;*/
 }
 
 .hidden-trigger {

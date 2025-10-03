@@ -62,7 +62,7 @@ public sealed class AppUrlSchemeHandlerWithManager(Func<AppKitWebViewManager?> m
     private static void FinishText(IWKUrlSchemeTask task, int code, string reason, string text)
     {
         var headers = new NSDictionary<NSString, NSString>(new NSString("Content-Type"), new NSString("text/plain; charset=utf-8"));
-        var resp = new NSHttpUrlResponse(task.Request?.Url ?? new NSUrl("app://localhost/"), (nint)code, reason, headers);
+        var resp = new NSHttpUrlResponse(task.Request.Url, code, reason, headers);
         task.DidReceiveResponse(resp);
         using var data = NSData.FromString(text);
         task.DidReceiveData(data);

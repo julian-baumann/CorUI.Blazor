@@ -2,24 +2,27 @@ using Microsoft.AspNetCore.Components.WebView;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
-using System.IO;
+using System.Text.Json;
 using WebKit;
 
 namespace CorUI.macOS;
 
-public sealed class BlazorWebView : NSViewController
+public sealed class BlazorWebView(IServiceProvider serviceProvider, Window window) : NSViewController
 {
+    public event Action? Ready;
+    private bool IsReady { get; set; }
     private WKWebView? _webView;
     private AppKitWebViewManager? _manager;
     private WKUserContentController? _userContentController;
     private ScriptMessageHandler? _scriptMessageHandler;
+    private ScriptMessageHandler? _hostMessageHandler;
     private AppUrlSchemeHandlerWithManager? _schemeHandler;
     private PhysicalFileProvider? _physicalFileProvider;
 
     public override void LoadView()
     {
-        var bounds = new CoreGraphics.CGRect(0, 0, 1200, 800);
-        View = new DraggableVisualEffectView(bounds)
+        var bounds = new CGRect(0, 0, window.Width, window.Height);
+        View = new DraggableVisualEffectView(bounds, window)
         {
             AutoresizingMask = NSViewResizingMask.WidthSizable | NSViewResizingMask.HeightSizable,
             BlendingMode = NSVisualEffectBlendingMode.BehindWindow,
@@ -31,8 +34,7 @@ public sealed class BlazorWebView : NSViewController
     {
         base.ViewDidLoad();
 
-        var services = MacOSApplication.ServiceProvider;
-        var options = services.GetRequiredService<BlazorWebViewOptions>();
+        var options = serviceProvider.GetRequiredService<BlazorWebViewOptions>();
 
         var config = new WKWebViewConfiguration();
         _userContentController = new WKUserContentController();
@@ -49,15 +51,47 @@ public sealed class BlazorWebView : NSViewController
             """;
 
         _userContentController.AddUserScript(new WKUserScript(new NSString(bridgeJs), WKUserScriptInjectionTime.AtDocumentStart, true));
+        
+        var hostBridgeJs = """
+            (() => {
+               if (!window.host) { window.host = {}; }
+               window.host.notify = function(m) {
+                   try { window.webkit?.messageHandlers?.host?.postMessage(m); } catch {}
+               };
+            })();
+            """;
+        _userContentController!.AddUserScript(new WKUserScript(new NSString(hostBridgeJs), WKUserScriptInjectionTime.AtDocumentStart, true));
+        _hostMessageHandler = new ScriptMessageHandler(message =>
+        {
+            if (string.Equals(message, "ready", StringComparison.OrdinalIgnoreCase))
+            {
+                if (!IsReady)
+                {
+                    IsReady = true;
+                    Ready?.Invoke();
+                }
+            }
+        });
+        _userContentController.AddScriptMessageHandler(_hostMessageHandler, "host");
+        
         _scriptMessageHandler = new ScriptMessageHandler(msg => _manager?.ForwardScriptMessage(msg));
         _userContentController.AddScriptMessageHandler(_scriptMessageHandler, "webview");
+        
+        InjectHtmlClasses(
+            "mac",
+            "vibrancy",
+            "window-buttons-left",
+            window.MacWindowOptions.MacTrafficLightStyle == MacTrafficLightStyle.Expanded
+                ? "toolbar-expanded"
+                : "toolbar-compact"
+        );
 
         _schemeHandler = new AppUrlSchemeHandlerWithManager(() => _manager);
 
         config.UserContentController = _userContentController;
         config.SetUrlSchemeHandler(_schemeHandler, "app");
 
-        var webView = new DraggableWKWebView(View.Bounds, config)
+        var webView = new DraggableWkWebView(View.Bounds, config)
         {
             AutoresizingMask = NSViewResizingMask.WidthSizable | NSViewResizingMask.HeightSizable,
             UnderPageBackgroundColor = NSColor.Clear
@@ -90,24 +124,58 @@ public sealed class BlazorWebView : NSViewController
 
         _manager = new AppKitWebViewManager(
             _webView,
-            services,
+            serviceProvider,
             fileProvider,
             options.RelativeHostPath,
             options.RootComponent,
-            services.GetService<ILogger<AppKitWebViewManager>>());
+            serviceProvider.GetService<ILogger<AppKitWebViewManager>>());
 
         _manager.Navigate(new Uri(AppKitWebViewManager.BaseUri, "/").ToString());
+    }
+    
+
+    private void InjectHtmlClasses(params string?[] classes)
+    {
+        if (_userContentController is null)
+        {
+            return;
+        }
+
+        var filtered = classes.Where(c => !string.IsNullOrWhiteSpace(c)).ToArray();
+        if (filtered.Length == 0)
+        {
+            return;
+        }
+
+        var payload = JsonSerializer.Serialize(filtered);
+        var js = $"(function(c){{var e=document.documentElement||document.getElementsByTagName('html')[0];if(!e){{return;}}for(var i=0;i<c.length;i++){{e.classList.add(c[i]);}}}})({payload});";
+
+        _userContentController.AddUserScript(
+            new WKUserScript(new NSString(js), WKUserScriptInjectionTime.AtDocumentStart, true));
     }
 
     protected override void Dispose(bool disposing)
     {
         if (disposing)
         {
-            if (_physicalFileProvider is { } physicalProvider)
+            if (_manager is not null)
             {
-                physicalProvider.Dispose();
-                _physicalFileProvider = null;
+                if (_manager is IAsyncDisposable asyncDisposable)
+                {
+                    try
+                    {
+                        _ = asyncDisposable.DisposeAsync();
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+                }
+
+                _manager = null;
             }
+
+            // 2) Now it’s safe to remove JS handlers & user scripts
             if (_userContentController is { } controller)
             {
                 if (_scriptMessageHandler is { } handler)
@@ -117,29 +185,32 @@ public sealed class BlazorWebView : NSViewController
                     _scriptMessageHandler = null;
                 }
 
+                if (_hostMessageHandler is { } hm)
+                {
+                    controller.RemoveScriptMessageHandler("host");
+                    hm.Dispose();
+                    _hostMessageHandler = null;
+                }
+
                 controller.RemoveAllUserScripts();
                 controller.Dispose();
                 _userContentController = null;
             }
 
+            // 3) Scheme handler and providers
             if (_schemeHandler is { } schemeHandler)
             {
                 schemeHandler.Dispose();
                 _schemeHandler = null;
             }
 
-            if (_manager is not null)
+            if (_physicalFileProvider is { } physicalProvider)
             {
-                switch (_manager)
-                {
-                    case IAsyncDisposable asyncDisposable:
-                        asyncDisposable.DisposeAsync().AsTask().GetAwaiter().GetResult();
-                        break;
-                }
-
-                _manager = null;
+                physicalProvider.Dispose();
+                _physicalFileProvider = null;
             }
 
+            // 4) Finally tear down the WebView
             if (_webView is { } webView)
             {
                 webView.StopLoading();
@@ -154,13 +225,11 @@ public sealed class BlazorWebView : NSViewController
         base.Dispose(disposing);
     }
 
-    private sealed class ScriptMessageHandler : NSObject, IWKScriptMessageHandler
+    private sealed class ScriptMessageHandler(Action<string> onMessage) : NSObject, IWKScriptMessageHandler
     {
-        private readonly Action<string> _onMessage;
-        public ScriptMessageHandler(Action<string> onMessage) { _onMessage = onMessage; }
         public void DidReceiveScriptMessage(WKUserContentController _, WKScriptMessage message)
         {
-            _onMessage(message.Body?.ToString() ?? string.Empty);
+            onMessage(message.Body.ToString() ?? string.Empty);
         }
     }
 }

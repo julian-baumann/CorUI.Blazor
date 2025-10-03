@@ -1,17 +1,14 @@
+using System.Runtime.InteropServices;
 using WebKit;
 
 namespace CorUI.macOS;
 
-internal sealed class DraggableWKWebView : WKWebView
+internal sealed class DraggableWkWebView(CGRect frame, WKWebViewConfiguration configuration)
+    : WKWebView(frame, configuration)
 {
     private bool _trackingDragRegion;
 
-    public DraggableWKWebView(CGRect frame, WKWebViewConfiguration configuration)
-        : base(frame, configuration)
-    {
-    }
-
-    public nfloat DragRegionHeight { get; set; } = DraggableVisualEffectView.DefaultDragRegionHeight;
+    public NFloat DragRegionHeight { get; set; } = 0;
 
     public override void MouseDown(NSEvent theEvent)
     {

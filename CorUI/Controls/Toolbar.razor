@@ -1,9 +1,9 @@
-<div class="header @(IsMac ? "mac" : "")">
+<div class="toolbar">
     <div class="title">
-        @Title   
+        @Title
     </div>
-    
-    <div class="toolbar">
+
+    <div class="toolbar-content">
         @if (ShowBackButton)
         {
             <button class="nav rounded" onclick="history.back();">

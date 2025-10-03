@@ -1,8 +1,8 @@
 :root {
-    --background: #000000;
+    --background: #232227;
+    --sidebar-background: #2F2E33;
     --text-color: #ffffff;
     --nav-bar-background: #282828;
-    --sidebar-background: #282828;
     --navigation-button-background: #1168F5;
     --card-header-background: var(--nav-bar-background);
     --card-border-color: #3f3f46;

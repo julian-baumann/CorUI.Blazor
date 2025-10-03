@@ -1,0 +1,31 @@
+:root {
+    --title-height: 0px;
+    --toolbar-content-height: 52px;
+    --toolbar-height: calc(var(--toolbar-content-height) + var(--title-height));
+    --toolbar-background: var(--sidebar-background);
+}
+
+.mac {
+    --window-buttons-width: 82px;
+}
+
+*:not(.selectable) {
+    user-select: none;
+}
+
+.vibrancy {
+    --sidebar-background: transparent;
+}
+
+.toolbar-expanded {
+    /*--toolbar-height: 52px;*/
+}
+
+.toolbar-compact {
+    --title-height: 31px;
+    /*--toolbar-height: 32px;*/
+}
+
+.toolbar + *:not(.page) {
+    margin-top: var(--toolbar-height);
+}

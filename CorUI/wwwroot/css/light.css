@@ -1,8 +1,8 @@
 :root {
-    --background: #ffffff;
+    --background: #FAFAFA;
+    --sidebar-background: #EBEBEB;
     --text-color: #000000;
     --nav-bar-background: #FFFFFF;
-    --sidebar-background: #FFFFFF;
     --button-background: rgba(204, 204, 204, 0.36);
     --button-border-color: rgba(189, 189, 189, 0.37);
     --navigation-button-background: #0B60FF;

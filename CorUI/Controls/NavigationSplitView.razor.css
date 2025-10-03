@@ -10,11 +10,14 @@
     background: var(--sidebar-background);
     display: flex;
     flex-direction: column;
-    padding: env(safe-area-inset-top) 10px 10px;
+    padding: 0 10px 10px;
 }
 
 .sidebar .header {
+    height: var(--toolbar-content-height);
+    margin-top: var(--title-height);
     display: flex;
+    align-items: center;
 }
 
 .sidebar .header .left, .right {
@@ -30,4 +33,6 @@
     flex: 1;
     /*padding: calc(env(safe-area-inset-top) + 20px) 20px 20px;*/
     overflow: auto;
+    background: var(--background);
+    padding-top: var(--toolbar-height);
 }

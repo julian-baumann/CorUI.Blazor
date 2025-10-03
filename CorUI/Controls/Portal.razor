@@ -10,9 +10,9 @@
     [Inject] private IJSRuntime Js { get; set; } = null!;
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public EventCallback AfterContentRendered { get; set; }
-    
+
     private bool _isInitialized;
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -20,15 +20,16 @@
             await InitializePortalAsync();
         }
     }
-    
+
     private async Task InitializePortalAsync()
     {
         await Js.InvokeVoidAsync("portalHelpers.ensureInit");
         _isInitialized = true;
         StateHasChanged();
+        await Js.InvokeVoidAsync("portalHelpers.afterNextFrame");
         await AfterContentRendered.InvokeAsync();
     }
-    
+
     public async ValueTask DisposeAsync()
     {
         if (_isInitialized)
@@ -42,8 +43,8 @@
     (() => {
         const portalHelpers = {
             portalRoot: null,
-            
-            ensureInit: function() {
+
+            ensureInit: function () {
                 if (!this.portalRoot) {
                     this.portalRoot = document.createElement('div');
                     this.portalRoot.id = 'portal-root';
@@ -57,15 +58,21 @@
                     document.body.appendChild(this.portalRoot);
                 }
             },
-            
-            cleanup: function() {
+
+            afterNextFrame: function () {
+                return new Promise(resolve => {
+                    requestAnimationFrame(() => requestAnimationFrame(resolve));
+                });
+            },
+
+            cleanup: function () {
                 if (this.portalRoot) {
                     document.body.removeChild(this.portalRoot);
                     this.portalRoot = null;
                 }
             }
         };
-        
+
         window.portalHelpers = portalHelpers;
     })();
-</script> 
+</script>

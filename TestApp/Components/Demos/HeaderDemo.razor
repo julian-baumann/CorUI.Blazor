@@ -1,37 +1,35 @@
-@using CorUI
-
 <div class="demo-container">
     <h1 class="demo-title">Header</h1>
 
     <div class="demo-section">
         <h4 class="demo-section-title">Basic Header</h4>
         <div class="demo-content">
-            <Header ShowBackButton="true">
+            <Toolbar ShowBackButton="true">
                 <div class="spacer"></div>
                 <h3 style="margin: 0">Page Title</h3>
                 <div class="spacer"></div>
-            </Header>
+            </Toolbar>
         </div>
     </div>
 
     <div class="demo-section">
         <h4 class="demo-section-title">With SegmentedControl</h4>
         <div class="demo-content">
-            <Header ShowBackButton="true">
+            <Toolbar ShowBackButton="true">
                 <div class="spacer"></div>
                 <SegmentedControl 
                     Options="@(new[] { "Grid", "List", "Gallery" })"
                     @bind-SelectedOption="viewType" />
                 <div class="spacer"></div>
                 <button class="primary small">Save</button>
-            </Header>
+            </Toolbar>
         </div>
     </div>
     
     <div class="demo-section">
         <h4 class="demo-section-title">With SegmentedControl</h4>
         <div class="demo-content">
-            <Header Title="Unnamed Documents">
+            <Toolbar Title="Unnamed Documents">
                 <div class="spacer"></div>
                 <button>
                     <i class="fa-regular fa-plus"></i>
@@ -42,7 +40,7 @@
                     Contacts
                 </button>
                 <div class="spacer"></div>
-            </Header>
+            </Toolbar>
         </div>
     </div>
 </div>

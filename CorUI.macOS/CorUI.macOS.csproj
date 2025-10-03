@@ -16,6 +16,10 @@
         <Content Remove="Assets.xcassets/**" />
         <AssetCatalog Include="Assets.xcassets/**" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\CorUI\CorUI.csproj" />
+    </ItemGroup>
 
     <Import Project="CorUI.macOS.StaticWebAssets.targets" Condition="Exists('CorUI.macOS.StaticWebAssets.targets')" />
 </Project>

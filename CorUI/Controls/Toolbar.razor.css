@@ -1,0 +1,53 @@
+.toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: var(--toolbar-background);
+    /*border-bottom: 0.5px solid var(--divider-color);*/
+    /*box-shadow: var(--menu-shadow);*/
+}
+
+.toolbar-compact .title {
+    display: flex;
+}
+
+.window-buttons-left .title {
+    padding-left: var(--window-buttons-width);
+}
+
+.window-buttons-right .title {
+    padding-right: var(--window-buttons-width);
+}
+
+.title {
+    display: none;
+    height: var(--title-height);
+    font-size: 0.9em;
+    justify-content: start;
+    align-items: center;
+    text-align: center;
+    opacity: 0.8;
+    padding: 3px 0;
+    font-weight: bold;
+}
+
+.toolbar-content {
+    height: var(--toolbar-content-height);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+}
+
+/*.mac {*/
+/*    padding-left: 75px;*/
+/*}*/
+
+.header-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}

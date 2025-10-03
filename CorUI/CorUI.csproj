@@ -5,9 +5,16 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+        <Compile Remove="WebApp.cs" Condition="'$(TargetPlatformIdentifier)' == 'macos' or '$(TargetPlatformIdentifier)' == 'windows'" />
+    </ItemGroup>
 
     <ItemGroup>
         <SupportedPlatform Include="browser"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <StaticWebAssetFingerprintPattern Remove="**/*.lib.module.js" />
     </ItemGroup>
 
     <ItemGroup>
