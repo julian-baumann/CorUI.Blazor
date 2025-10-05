@@ -1,11 +1,16 @@
 .toolbar {
-    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     background: var(--toolbar-background);
-    /*border-bottom: 0.5px solid var(--divider-color);*/
-    /*box-shadow: var(--menu-shadow);*/
+}
+
+.window-buttons-left .window-button-spacer .toolbar-content {
+    padding-left: calc(var(--window-buttons-width) + 15px);
+}
+
+.window-buttons-right .window-button-spacer .toolbar-content {
+    padding-right: calc(var(--window-buttons-width) + 15px);
 }
 
 .toolbar-compact .title {

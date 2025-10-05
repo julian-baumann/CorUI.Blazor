@@ -21,6 +21,10 @@ public record Window
     public bool IsFullScreen { get; init; } = false;
 
     public MacWindowOptions MacWindowOptions { get; init; } = new();
+
+    // Platform hints
+    public bool EnableDrag { get; init; } = true;
+    public bool DismissWithEscape { get; init; } = true;
 }
 
 public enum MacTrafficLightStyle

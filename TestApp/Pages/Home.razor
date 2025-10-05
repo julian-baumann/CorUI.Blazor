@@ -3,17 +3,13 @@
 
 <PageTitle>CorUI Kitchen Sink</PageTitle>
 
-<Toolbar ShowBackButton="false" Title="CorUI Gallery">
-    <div class="spacer"></div>
-    <button class="primary small">Save</button>
-</Toolbar>
-
-<NavigationSplitView SideBarWidth="220">
+<NavigationSplitView SideBarWidth="220" @bind-Collapsed="SidebarCollapsed">
     <Sidebar>
         <NavigationButton Active="@(activeSection == "Button")" Click="@(() => activeSection = "Button")">Button</NavigationButton>
         <NavigationButton Active="@(activeSection == "Spinner")" Click="@(() => activeSection = "Spinner")">Spinner</NavigationButton>
         <NavigationButton Active="@(activeSection == "Menu")" Click="@(() => activeSection = "Menu")">Menu</NavigationButton>
         <NavigationButton Active="@(activeSection == "Dialog")" Click="@(() => activeSection = "Dialog")">Dialog</NavigationButton>
+        <NavigationButton Active="@(activeSection == "WindowService")" Click="@(() => activeSection = "WindowService")">Window Service</NavigationButton>
         <NavigationButton Active="@(activeSection == "SegmentedControl")" Click="@(() => activeSection = "SegmentedControl")">SegmentedControl</NavigationButton>
         <NavigationButton Active="@(activeSection == "Header")" Click="@(() => activeSection = "Header")">Header</NavigationButton>
         <NavigationButton Active="@(activeSection == "InputGroup")" Click="@(() => activeSection = "InputGroup")">Input Group</NavigationButton>
@@ -23,59 +19,83 @@
         <NavigationButton Active="@(activeSection == "ProgressBar")" Click="@(() => activeSection = "ProgressBar")">ProgressBar</NavigationButton>
     </Sidebar>
     <Content>
-        @switch (activeSection)
-        {
-            case "Button":
-                <ButtonDemo />
-                break;
+        <Page>
+            <PageToolbar>
+                <Toolbar Title="CorUI Gallery">
+                    <button class="nav icon">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+
+                    <div class="spacer"></div>
+
+                    <button class="nav icon">
+                        <i class="fa-solid fa-turntable"></i>
+                    </button>
+                    <button class="primary small">Save Test</button>
+                </Toolbar>
+            </PageToolbar>
             
-            case "Spinner":
-                <SpinnerDemo />
-                break;
-            
-            case "Menu":
-                <MenuDemo />
-                break;
-            
-            case "Dialog":
-                <DialogDemo />
-                break;
-            
-            case "SegmentedControl":
-                <SegmentedControlDemo />
-                break;
-            
-            case "Header":
-                <HeaderDemo />
-                break;
-            
-            case "InputGroup":
-                <InputGroupDemo />
-                break;
-            
-            case "List":
-                <ListDemo />
-                break;
-            
-            case "Toggle":
-                <ToggleDemo />
-                break;
-            
-            case "Card":
-                <CardDemo />
-                break;
-            
-            case "ProgressBar":
-                <ProgressBarDemo />
-                break;
-            
-            default:
-                <ButtonDemo />
-                break;
-        }
+            <PageContent>
+                @switch (activeSection)
+                {
+                    case "Button":
+                        <ButtonDemo/>
+                        break;
+
+                    case "Spinner":
+                        <SpinnerDemo/>
+                        break;
+
+                    case "Menu":
+                        <MenuDemo/>
+                        break;
+
+                    case "Dialog":
+                        <DialogDemo/>
+                        break;
+
+                    case "WindowService":
+                        <WindowServiceDemo/>
+                        break;
+
+                    case "SegmentedControl":
+                        <SegmentedControlDemo/>
+                        break;
+
+                    case "Header":
+                        <HeaderDemo/>
+                        break;
+
+                    case "InputGroup":
+                        <InputGroupDemo/>
+                        break;
+
+                    case "List":
+                        <ListDemo/>
+                        break;
+
+                    case "Toggle":
+                        <ToggleDemo/>
+                        break;
+
+                    case "Card":
+                        <CardDemo/>
+                        break;
+
+                    case "ProgressBar":
+                        <ProgressBarDemo/>
+                        break;
+
+                    default:
+                        <ButtonDemo/>
+                        break;
+                }
+            </PageContent>
+        </Page>
     </Content>
 </NavigationSplitView>
 
 @code {
     private string activeSection = "Button";
+    private bool SidebarCollapsed { get; set; } = false;
 }

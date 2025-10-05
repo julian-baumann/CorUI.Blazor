@@ -1,25 +1,267 @@
-﻿<div class="page">
-    <div class="sidebar" style="max-width:@($"{SideBarWidth}px")">
-        <div class="header">
-            <div class="left">
+﻿@using System.Globalization
+@using CorUI.Services
+
+    <div class="navigation-split-page" @onpointermove="HandlePointerMove" @onpointerup="HandlePointerUp" @onpointerleave="HandlePointerUp" @onpointercancel="HandlePointerUp">
+    <div class="sidebar @(_isCollapsed ? "collapsed" : string.Empty)" style="@SidebarStyle">
+        <div class="sidebar-inner">
+            <div class="header">
+                <div class="left">
+                </div>
+                <div class="right">
+                    <button class="nav icon" @onclick="ToggleCollapse">
+                        @if (SidebarIcon != null)
+                        {
+                            @SidebarIcon
+                        }
+                        else
+                        {
+                            <i class="fa-light fa-sidebar"></i>
+                        }
+                    </button>
+                </div>
             </div>
-            <div class="right">
-                <button class="nav icon">
-                    <i class="fa-light fa-sidebar"></i>
-                </button>
+
+            <div class="sidebar-content">
+                @Sidebar
             </div>
         </div>
-        @Sidebar
     </div>
-    
+
+    @if (!_isCollapsed)
+    {
+        <div class="sidebar-resizer @(_isDragging ? "dragging" : string.Empty)"
+             @onpointerdown="HandlePointerDown"
+             @onpointerdown:preventDefault
+             @onpointerdown:stopPropagation>
+        </div>   
+    }
+
     <div class="content">
-        @Content
+        @if (Content is not null)
+        {
+            <CascadingValue Value="@_contentContext">
+                @Content
+            </CascadingValue>
+        }
     </div>
 </div>
 
 @code {
+    private readonly NavigationSplitViewContext _contentContext;
+
+    public NavigationSplitView()
+    {
+        _contentContext = new NavigationSplitViewContext(this);
+    }
+
+    [Inject] private IViewStorage? ViewStorage { get; set; }
+
+    [Parameter] public RenderFragment? SidebarIcon { get; set; }
     [Parameter] public RenderFragment? Sidebar { get; set; }
     [Parameter] public RenderFragment? Content { get; set; }
 
-    [Parameter] public float? SideBarWidth { get; set; } = 300;
+    [Parameter] public float? SideBarWidth { get; set; } = 300f;
+    [Parameter] public float MinSideBarWidth { get; set; } = 160f;
+    [Parameter] public string StorageKey { get; set; } = nameof(NavigationSplitView);
+    [Parameter] public bool? Collapsed { get; set; }
+    [Parameter] public EventCallback<bool> CollapsedChanged { get; set; }
+
+    private const string WidthSuffix = "-width";
+    private const string CollapsedSuffix = "-collapsed";
+
+    private bool _isCollapsed;
+    private bool _isDragging;
+    private float _currentWidth;
+    private float _lastExpandedWidth;
+    private double _dragStartClientX;
+    private float _dragStartWidth;
+
+    internal bool IsSidebarCollapsed => _isCollapsed;
+    internal float CurrentSidebarWidth => _currentWidth;
+
+    internal Task SetSidebarCollapsedFromChildAsync(bool collapsed)
+        => InvokeAsync(() => SetSidebarCollapsedCoreAsync(collapsed, updateLayout: true, persistState: true, notify: true));
+
+    internal Task ToggleSidebarFromChildAsync()
+        => InvokeAsync(() => SetSidebarCollapsedCoreAsync(!_isCollapsed, updateLayout: true, persistState: true, notify: true));
+
+    private string SidebarStyle => $"--sidebar-width:{(_isCollapsed ? 0 : _currentWidth).ToString("0.##", CultureInfo.InvariantCulture)}px;";
+    private float EffectiveMinWidth => Math.Max(0, MinSideBarWidth);
+    private float DefaultWidth => Math.Max(SideBarWidth ?? 300f, EffectiveMinWidth);
+    private string WidthStorageKey => string.IsNullOrWhiteSpace(StorageKey) ? nameof(NavigationSplitView) + WidthSuffix : StorageKey + WidthSuffix;
+    private string CollapsedStorageKey => string.IsNullOrWhiteSpace(StorageKey) ? nameof(NavigationSplitView) + CollapsedSuffix : StorageKey + CollapsedSuffix;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _lastExpandedWidth = DefaultWidth;
+        if (ViewStorage is not null)
+        {
+            try
+            {
+                var storedWidth = ViewStorage.GetFloat(WidthStorageKey);
+                if (storedWidth > 0)
+                {
+                    _lastExpandedWidth = Math.Max(storedWidth, EffectiveMinWidth);
+                }
+
+                _isCollapsed = ViewStorage.GetBool(CollapsedStorageKey);
+            }
+            catch
+            {
+                // Intentionally ignore storage read failures to keep the UI responsive.
+            }
+        }
+
+        if (_lastExpandedWidth < EffectiveMinWidth)
+        {
+            _lastExpandedWidth = EffectiveMinWidth;
+        }
+
+        _currentWidth = _isCollapsed ? 0 : _lastExpandedWidth;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (Collapsed.HasValue && Collapsed.Value != _isCollapsed)
+        {
+            await SetSidebarCollapsedCoreAsync(
+                collapsed: Collapsed.Value,
+                updateLayout: false,
+                persistState: true,
+                notify: false);
+        }
+    }
+
+    private void HandlePointerDown(PointerEventArgs args)
+    {
+        _isDragging = true;
+        _dragStartClientX = args.ClientX;
+        _dragStartWidth = _isCollapsed ? 0 : _currentWidth;
+    }
+
+    private void HandlePointerMove(PointerEventArgs args)
+    {
+        if (!_isDragging)
+        {
+            return;
+        }
+
+        var delta = (float)(args.ClientX - _dragStartClientX);
+        var newWidth = Math.Max(0, _dragStartWidth + delta);
+        var previousCollapsedState = _isCollapsed;
+
+        if (newWidth <= EffectiveMinWidth)
+        {
+            CollapseSidebar();
+        }
+        else
+        {
+            _isCollapsed = false;
+            _currentWidth = newWidth;
+            _lastExpandedWidth = newWidth;
+        }
+
+        if (previousCollapsedState != _isCollapsed)
+        {
+            NotifyCollapsedChangedAsync();
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task HandlePointerUp(PointerEventArgs args)
+    {
+        if (!_isDragging)
+        {
+            return;
+        }
+
+        _isDragging = false;
+        PersistState();
+        StateHasChanged();
+        await NotifyCollapsedChangedAsync();
+    }
+
+    private Task ToggleCollapse()
+        => SetSidebarCollapsedCoreAsync(!_isCollapsed, updateLayout: true, persistState: true, notify: true);
+
+    private void CollapseSidebar()
+    {
+        _isCollapsed = true;
+        _currentWidth = 0;
+    }
+
+    public void ExpandSidebar()
+    {
+        _isCollapsed = false;
+        if (_lastExpandedWidth < EffectiveMinWidth)
+        {
+            _lastExpandedWidth = DefaultWidth;
+        }
+
+        _currentWidth = Math.Max(_lastExpandedWidth, EffectiveMinWidth);
+        _lastExpandedWidth = _currentWidth;
+        NotifyCollapsedChangedAsync();
+    }
+
+    private async Task SetSidebarCollapsedCoreAsync(bool collapsed, bool updateLayout, bool persistState, bool notify)
+    {
+        var previous = _isCollapsed;
+
+        if (collapsed)
+        {
+            CollapseSidebar();
+        }
+        else
+        {
+            ExpandSidebar();
+        }
+
+        if (persistState)
+        {
+            PersistState();
+        }
+
+        if (updateLayout)
+        {
+            StateHasChanged();
+        }
+
+        if (notify && previous != _isCollapsed)
+        {
+            await NotifyCollapsedChangedAsync();
+        }
+    }
+
+    private void PersistState()
+    {
+        if (ViewStorage is null)
+        {
+            return;
+        }
+
+        try
+        {
+            ViewStorage.SetBool(CollapsedStorageKey, _isCollapsed);
+            ViewStorage.SetFloat(WidthStorageKey, Math.Max(_lastExpandedWidth, EffectiveMinWidth));
+        }
+        catch
+        {
+            // Ignore persistence issues – users can still interact with the UI.
+        }
+    }
+
+    private Task NotifyCollapsedChangedAsync()
+    {
+        if (!CollapsedChanged.HasDelegate || Collapsed == _isCollapsed)
+        {
+            return Task.CompletedTask;
+        }
+
+        return CollapsedChanged.InvokeAsync(_isCollapsed);
+    }
 }

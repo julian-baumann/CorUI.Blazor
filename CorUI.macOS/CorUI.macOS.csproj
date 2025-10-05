@@ -8,7 +8,7 @@
         <GenerateStaticWebAssetsManifest>true</GenerateStaticWebAssetsManifest>
         <GenerateStaticWebAssetsEndpointsManifest>true</GenerateStaticWebAssetsEndpointsManifest>
     </PropertyGroup>
-    
+
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="9.0.8" />

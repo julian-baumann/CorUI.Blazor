@@ -1,0 +1,16 @@
+<div class="cor-ui-page">
+    @if (PageToolbar != null)
+    {
+        <div class="cor-ui--toolbar">
+            @PageToolbar
+        </div>   
+    }
+    <div class="cor-ui--content">
+        @PageContent
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public required RenderFragment PageContent { get; set; }
+    [Parameter] public required RenderFragment? PageToolbar { get; set; }
+}

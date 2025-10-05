@@ -66,5 +66,5 @@ public sealed class AppKitWebViewManager : WebViewManager
     }
 
     internal bool TryServe(string requestUri, out int statusCode, out string statusMessage, out Stream content, out IDictionary<string, string> headers)
-        => TryGetResponseContent(requestUri, allowFallbackOnHostPage: false, out statusCode, out statusMessage, out content, out headers);
+        => TryGetResponseContent(requestUri, allowFallbackOnHostPage: true, out statusCode, out statusMessage, out content, out headers);
 }

@@ -1,13 +1,20 @@
-<div class="toolbar">
+<div class="toolbar @(ReserveSpaceForWindowButtons ? "window-button-spacer" : "")">
     <div class="title">
         @Title
     </div>
 
     <div class="toolbar-content">
-        @if (ShowBackButton)
+        @if (SplitViewContext?.IsSidebarCollapsed == true)
         {
-            <button class="nav rounded" onclick="history.back();">
-                <i class="fa-solid fa-chevron-left"></i>
+            <button class="nav icon" @onclick="OpenSidebar">
+                @if (SplitViewContext?.SidebarIcon != null)
+                {
+                    @SplitViewContext.SidebarIcon
+                }
+                else
+                {
+                    <i class="fa-light fa-sidebar"></i>
+                }
             </button>
         }
 
@@ -21,7 +28,12 @@
     [Parameter] public string? Title { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
-    [Parameter] public bool ShowBackButton { get; set; }
+    [CascadingParameter] public NavigationSplitViewContext? SplitViewContext { get; set; }
 
-    private static bool IsMac => OperatingSystem.IsMacOS() || OperatingSystem.IsMacCatalyst();
+    private bool ReserveSpaceForWindowButtons => SplitViewContext?.IsSidebarCollapsed ?? true;
+
+    private void OpenSidebar()
+    {
+        SplitViewContext?.Owner.ExpandSidebar();
+    }
 }

@@ -1,0 +1,44 @@
+@using CorUI
+@using CorUI.Services
+
+<div class="demo-container">
+    <h1 class="demo-title">Window Service</h1>
+
+    <div class="demo-section">
+        <h4 class="demo-section-title">Open content via service</h4>
+        <div class="demo-content" style="display:flex; gap:12px; align-items:center;">
+            <button @onclick="OpenDialog">Open Dialog (service)</button>
+            <button class="primary" @onclick="OpenWindow">Open Window (service)</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject] private IWindowService WindowService { get; set; } = null!;
+
+    private async Task OpenDialog()
+    {
+        await WindowService.OpenDialog(new global::CorUI.Dialog
+        {
+            ContentPath = "/showcase/dialog",
+            Title = "Service Dialog",
+            Width = 640,
+            Height = 480,
+            BackdropDismissable = true,
+            DismissWithEscape = true
+        });
+    }
+
+    private async Task OpenWindow()
+    {
+        await WindowService.OpenWindow(new Window
+        {
+            ContentPath = "/showcase/window",
+            Title = "Service Window",
+            Width = 900,
+            Height = 600
+        });
+    }
+}
+
+

@@ -1,5 +1,6 @@
 :root {
     --background: #FAFAFA;
+    --window-background: var(--background); 
     --sidebar-background: #EBEBEB;
     --text-color: #000000;
     --nav-bar-background: #FFFFFF;
@@ -14,7 +15,7 @@
     --menu-border-color: rgba(0, 0, 0, 0.1);
     --menu-brightness: 100%;
     --menu-shadow: 0 0 50px rgba(151, 151, 151, 0.4);
-
+    --spinner-color: #8e8e93;
 
     --glass-bg: rgba(255, 255, 255, 0.2);
     --container-bg: rgba(255, 255, 255, 0.25);
@@ -33,10 +34,6 @@
     --segmented-border: transparent;
     --segmented-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     --segmented-hover: rgba(120, 120, 128, 0.16);
-
-    /* Spinner Variables */
-    --spinner-color: rgb(0, 122, 255);
-    --spinner-track-color: rgba(0, 0, 0, 0.1);
 
     /* Button Variables */
     --button-bg: rgba(120, 120, 128, 0.12);

@@ -74,5 +74,8 @@
         };
 
         window.portalHelpers = portalHelpers;
+        window.portalHelpers.focus = function (el) {
+            try { el?.focus(); } catch {}
+        };
     })();
 </script>

@@ -1,0 +1,14 @@
+.cor-ui-page {
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.cor-ui--toolbar {
+
+}
+
+.cor-ui--content {
+    overflow: auto;
+    flex: 1;
+}

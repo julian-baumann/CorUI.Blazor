@@ -4,7 +4,7 @@
 @if (ShouldRenderDialog)
 {
     <Portal AfterContentRendered="AfterContentRendered">
-        <div @ref="_backdropRef" class="backdrop" @onclick="BackdropClicked">
+        <div @ref="_backdropRef" class="backdrop" @onclick="BackdropClicked" @onkeydown="HandleKeyDown" tabindex="0">
             <div @ref="_dialogRef" class="dialog" @onclick:stopPropagation="true" @onclick:preventDefault="true">
                 <div class="header">
                     <h3>@Title</h3>
@@ -32,6 +32,7 @@
 @code {
     [Parameter] public string? Title { get; set; }
     [Parameter] public bool BackdropDismissable { get; set; } = true;
+    [Parameter] public bool DismissWithEscape { get; set; } = true;
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public EventCallback OpenInExternalWindowButtonClicked { get; set; }
@@ -78,13 +79,14 @@
     {
         if (firstRender)
         {
-            _module = await Js.InvokeAsync<IJSObjectReference>("import", "./_content/CorUI/Dialog.razor.js");
+            _module = await Js.InvokeAsync<IJSObjectReference>("import", "./_content/CorUI/Controls/Dialog.razor.js");
         }
     }
 
     private async Task OpenDialog()
     {
         await _module!.InvokeVoidAsync("open", _backdropRef, _dialogRef);
+        try { await Js.InvokeVoidAsync("portalHelpers.focus", _backdropRef); } catch { }
     }
 
     private async Task RunDelayedCloseAsync()
@@ -105,6 +107,14 @@
     {
         Opened = false;
         OpenedChanged.InvokeAsync(false);
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (DismissWithEscape && string.Equals(e.Key, "Escape", StringComparison.OrdinalIgnoreCase))
+        {
+            CloseDialog();
+        }
     }
 
     private async Task AfterContentRendered()

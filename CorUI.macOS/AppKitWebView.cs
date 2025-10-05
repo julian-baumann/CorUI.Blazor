@@ -98,7 +98,7 @@ public sealed class BlazorWebView(IServiceProvider serviceProvider, Window windo
         };
         if (View is DraggableVisualEffectView dragHost)
         {
-            webView.DragRegionHeight = dragHost.DragRegionHeight;
+            webView.DragRegionHeight = window.EnableDrag ? dragHost.DragRegionHeight : 0;
         }
         _webView = webView;
         if (OperatingSystem.IsMacOSVersionAtLeast(13, 3))
@@ -130,7 +130,8 @@ public sealed class BlazorWebView(IServiceProvider serviceProvider, Window windo
             options.RootComponent,
             serviceProvider.GetService<ILogger<AppKitWebViewManager>>());
 
-        _manager.Navigate(new Uri(AppKitWebViewManager.BaseUri, "/").ToString());
+        var targetPath = string.IsNullOrWhiteSpace(window.ContentPath) ? "/" : window.ContentPath;
+        _manager.Navigate(new Uri(AppKitWebViewManager.BaseUri, targetPath).ToString());
     }
     
 
