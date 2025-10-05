@@ -1,5 +1,6 @@
 <div class="demo-container">
     <h1 class="demo-title">Spinner</h1>
+    <p class="demo-description">Spinner indicates loading state. Use <code>Size</code> and optional <code>Show</code> flag.</p>
 
     <div class="demo-section">
         <h4 class="demo-section-title">Sizes</h4>
@@ -17,6 +18,9 @@
                 <span style="font-size: 0.875rem; color: var(--label-color);">Large</span>
             </div>
         </div>
+        <CodeBlock>
+@("<Spinner Size=\"Spinner.SpinnerSize.Small\" />\n<Spinner Size=\"Spinner.SpinnerSize.Medium\" />\n<Spinner Size=\"Spinner.SpinnerSize.Large\" />")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -25,6 +29,9 @@
             <Spinner Show="@isLoading" Size="Spinner.SpinnerSize.Small" />
             <span>@(isLoading ? "Loading..." : "Content loaded!")</span>
         </div>
+        <CodeBlock>
+@("<Spinner Show=\"@isLoading\" Size=\"Spinner.SpinnerSize.Small\" />")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -35,6 +42,9 @@
                 <span>Processing...</span>
             </button>
         </div>
+        <CodeBlock>
+@("<button class=\"loading\"><Spinner Size=\"Spinner.SpinnerSize.Small\" /> Processing...</button>")
+        </CodeBlock>
     </div>
 </div>
 

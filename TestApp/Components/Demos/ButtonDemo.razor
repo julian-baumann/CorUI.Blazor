@@ -1,5 +1,6 @@
 <div class="demo-container">
     <h1 class="demo-title">Button</h1>
+    <p class="demo-description">Buttons trigger actions. Use classes to style variants and sizes.</p>
     
     <div class="demo-section">
         <h4 class="demo-section-title">Button Variants</h4>
@@ -8,6 +9,9 @@
             <Button class="primary">Primary Button</Button>
             <Button class="danger">Danger Button</Button>
         </div>
+        <CodeBlock>
+@("<Button>Secondary Button</Button>\n<Button class=\"primary\">Primary Button</Button>\n<Button class=\"danger\">Danger Button</Button>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -17,6 +21,9 @@
             <Button>Default Size</Button>
             <Button class="large">Large Button</Button>
         </div>
+        <CodeBlock>
+@("<Button class=\"small\">Small</Button>\n<Button>Default</Button>\n<Button class=\"large\">Large</Button>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -33,6 +40,9 @@
                 Processing
             </Button>
         </div>
+        <CodeBlock>
+@("<Button disabled>Disabled</Button>\n<Button class=\"primary\" disabled>Disabled Primary</Button>\n<Button><Spinner Size=\"Spinner.SpinnerSize.Small\" /> Loading...</Button>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -57,6 +67,9 @@
                 Delete
             </Button>
         </div>
+        <CodeBlock>
+@("<Button><svg .../> Add Item</Button>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -66,5 +79,8 @@
             <Button>Cancel</Button>
             <Button tint="danger">Remove</Button>
         </div>
+        <CodeBlock>
+@("<Button tint=\"primary\">Sign In</Button>")
+        </CodeBlock>
     </div>
 </div> 

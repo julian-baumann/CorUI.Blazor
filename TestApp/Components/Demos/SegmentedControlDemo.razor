@@ -1,5 +1,6 @@
 <div class="demo-container">
     <h1 class="demo-title">Segmented Control</h1>
+    <p class="demo-description">Allow users to choose one option from a small set. Bind to a string value.</p>
 
     <div class="demo-section">
         <h4 class="demo-section-title">View Type</h4>
@@ -8,6 +9,9 @@
                 Options="@(new[] { "Grid", "List", "Gallery" })"
                 @bind-SelectedOption="viewType" />
         </div>
+        <CodeBlock>
+@("<SegmentedControl Options=\"new[] { \"Grid\", \"List\" }\" @bind-SelectedOption=\"viewType\" />")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">

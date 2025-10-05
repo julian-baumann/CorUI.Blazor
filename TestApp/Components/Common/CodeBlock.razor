@@ -1,0 +1,16 @@
+<div class="code-block">
+    @if (!string.IsNullOrWhiteSpace(Code))
+    {
+        <pre><code>@Code</code></pre>
+    }
+    else if (ChildContent is not null)
+    {
+        <pre><code>@ChildContent</code></pre>
+    }
+</div>
+
+@code {
+    [Parameter] public string? Code { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}
+

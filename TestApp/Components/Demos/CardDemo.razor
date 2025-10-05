@@ -1,5 +1,6 @@
 <div class="demo-container">
     <h1 class="demo-title">Card</h1>
+    <p class="demo-description">Cards group content and actions. They support arbitrary children.</p>
 
     <div class="demo-section">
         <h4 class="demo-section-title">Basic Card</h4>
@@ -9,6 +10,9 @@
                 <p>This is a basic card with some content. Cards can contain any type of content, including text, images, and other components.</p>
             </Card>
         </div>
+        <CodeBlock>
+@("<Card>...content...</Card>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -29,6 +33,9 @@
                 </div>
             </Card>
         </div>
+        <CodeBlock>
+@("<Card>\n  <InputGroup/>\n  <Toggle/>\n</Card>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -50,5 +57,8 @@
                 <button>Open Settings</button>
             </Card>
         </div>
+        <CodeBlock>
+@("<div class=\"grid\">\n  <Card>...</Card>\n</div>")
+        </CodeBlock>
     </div>
 </div> 

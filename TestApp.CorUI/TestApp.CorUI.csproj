@@ -13,7 +13,6 @@
     <ItemGroup>
         <Compile Remove="Platforms/MacOS/**/*.cs" Condition="'$(TargetPlatformIdentifier)' != 'macos'" />
         <Compile Remove="Platforms/Windows/**/*.cs" Condition="'$(TargetPlatformIdentifier)' != 'windows'" />
-        <Compile Remove="Platforms/Web/**/*.cs" Condition="'$(TargetPlatformIdentifier)' == 'macos' or '$(TargetPlatformIdentifier)' == 'windows'" />
     </ItemGroup>
     
     <ItemGroup>
@@ -23,7 +22,7 @@
         <BundleResource Include="wwwroot/**" />
     </ItemGroup>
 
-<!--    <Import Project="TestApp.CorUI.targets" Condition="Exists('TestApp.CorUI.targets')" />-->
+    <Import Project="TestApp.CorUI.targets" Condition="Exists('TestApp.CorUI.targets')" />
 
     <ItemGroup>
         <Content Include="wwwroot\webfonts\fa-brands-400.ttf">

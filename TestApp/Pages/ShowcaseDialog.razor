@@ -1,9 +1,14 @@
 @page "/showcase/dialog"
 
+@inject CorUI.Services.IDialogControlService DialogCtl
+
 <div style="padding:16px">
     <h2>Showcase Dialog Content</h2>
     <p>This page is rendered inside the service-driven dialog on Web and inside a native sheet on macOS.</p>
     <p>Use this area to preview content for dialogs.</p>
+    <p>
+        <button @onclick="CloseDialog">Close Dialog (C# Service)</button>
+    </p>
     <p><a href="/">Back to Home</a></p>
     <div style="height:400px"></div>
     <p>End of sample content.</p>
@@ -12,6 +17,13 @@
     <div style="height:100px"></div>
     <p>Bottom.</p>
 </div>
+
+@code {
+    private async Task CloseDialog()
+    {
+        await DialogCtl.CloseActiveDialog();
+    }
+}
 
 
 

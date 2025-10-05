@@ -1,5 +1,6 @@
 <div class="demo-container">
     <h1 class="demo-title">List & ListItem</h1>
+    <p class="demo-description">Lists group items with consistent spacing and optional dividers.</p>
 
     <div class="demo-section">
         <h4 class="demo-section-title">Basic List</h4>
@@ -10,6 +11,9 @@
                 <ListItem>Third item</ListItem>
             </List>
         </div>
+        <CodeBlock>
+@("<List>\n  <ListItem>Item</ListItem>\n</List>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -25,6 +29,9 @@
                 <ListItem>Help & Support</ListItem>
             </List>
         </div>
+        <CodeBlock>
+@("<List>\n  <ListItem/>\n  <Divider/>\n  <ListItem/>\n</List>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -51,5 +58,8 @@
                 </ListItem>
             </List>
         </div>
+        <CodeBlock>
+@("<List>\n  <ListItem>...custom layout...</ListItem>\n</List>")
+        </CodeBlock>
     </div>
 </div> 

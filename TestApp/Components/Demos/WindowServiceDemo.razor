@@ -18,8 +18,11 @@
 
     private async Task OpenDialog()
     {
-        await WindowService.OpenDialog(new global::CorUI.Dialog
+        await WindowService.OpenDialog(new CorUI.Dialog
         {
+            // Prefer rendering a component directly on web; macOS will still navigate ContentPath in a sheet webview
+            ComponentType = typeof(Pages.ShowcaseDialog),
+            Parameters = null,
             ContentPath = "/showcase/dialog",
             Title = "Service Dialog",
             Width = 640,

@@ -61,4 +61,10 @@
       <_ContentIncludedByDefault Remove="wwwroot\webfonts\fa-v4compatibility.woff2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Controls\DialogPresenterPresenter.razor.css">
+        <DependentUpon>DialogPresenterPresenterPresenter.razor</DependentUpon>
+      </None>
+    </ItemGroup>
+
 </Project>

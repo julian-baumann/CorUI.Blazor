@@ -1,64 +1,109 @@
-@* @using CorUI.Services *@
-@* @using Microsoft.Extensions.DependencyInjection *@
-@* @inject NavigationManager Nav *@
-@* @inject IServiceProvider Services *@
-@* @inject IWindowService _svc *@
-@* *@
-@* @if (_opened && _dialog is not null) *@
-@* { *@
-@*     <Dialog Title="@_title" Opened="true" OpenedChanged="OnOpenedChanged" BackdropDismissable="@_dialog.BackdropDismissable" DismissWithEscape="@_dialog.DismissWithEscape"> *@
-@*         <iframe style="width:100%;height:70vh;border:none;" src="@_contentUrl"></iframe> *@
-@*     </Dialog> *@
-@* } *@
-@* *@
-@* @code { *@
-@*     [Parameter] public string Title { get; set; } = ""; *@
-@* *@
-@*     private bool _opened; *@
-@*     private string _contentUrl = ""; *@
-@*     private string _title = ""; *@
-@*     private global::CorUI.Dialog? _dialog; *@
-@*     private DotNetObjectReference<DialogPresenter>? _selfRef; *@
-@* *@
-@*     protected override void OnInitialized() *@
-@*     { *@
-@*         if (_svc is not null) *@
-@*         { *@
-@*             _svc.DialogRequested += OnDialogRequested; *@
-@*         } *@
-@*         _selfRef = DotNetObjectReference.Create(this); *@
-@*     } *@
-@* *@
-@*     private Task OnDialogRequested(global::CorUI.Dialog dialog) *@
-@*     { *@
-@*         _dialog = dialog; *@
-@*         var path = string.IsNullOrWhiteSpace(dialog.ContentPath) ? "/" : dialog.ContentPath; *@
-@*         _contentUrl = Nav.ToAbsoluteUri(path).ToString(); *@
-@*         _title = dialog.Title; *@
-@*         _opened = true; *@
-@*         StateHasChanged(); *@
-@*         return Task.CompletedTask; *@
-@*     } *@
-@* *@
-@*     private void OnOpenedChanged(bool open) *@
-@*     { *@
-@*         _opened = open; *@
-@*         if (!open) *@
-@*         { *@
-@*             _svc?.CloseActiveDialog(); *@
-@*         } *@
-@*     } *@
-@* *@
-@*     public void Dispose() *@
-@*     { *@
-@*         if (_svc is not null) *@
-@*         { *@
-@*             _svc.DialogRequested -= OnDialogRequested; *@
-@*         } *@
-@*         _selfRef?.Dispose(); *@
-@*     } *@
-@* *@
-@*     // No cross-view dismissal wiring by request *@
-@* } *@
-@* *@
-@* *@
+@using CorUI.Services
+@using Microsoft.Extensions.DependencyInjection
+@inject NavigationManager Nav
+@inject IServiceProvider Services
+@inject IDialogControlService DialogCtl
+@inject IJSRuntime Js
+
+@if (ShouldRenderDialog && _dialog is not null)
+{
+    <Portal AfterContentRendered="AfterContentRendered">
+        <div @ref="_backdropRef" class="backdrop" @onclick="BackdropClicked" @onkeydown="HandleKeyDown" tabindex="0">
+            <div @ref="_dialogRef" class="dialog" @onclick:stopPropagation="true" @onclick:preventDefault="true">
+                <div class="header">
+                    <h3>@_title</h3>
+                    <button class="icon small" @onclick="CloseDialog">
+                        <i class="fa-solid fa-xmark-large"></i>
+                    </button>
+                </div>
+
+                <div class="dialog-content">
+                    @if (_dialog.ComponentType is not null)
+                    {
+                        <DynamicComponent Type="@_dialog.ComponentType" Parameters="@_dialog.Parameters" />
+                    }
+                </div>
+            </div>
+        </div>
+    </Portal>
+}
+
+@code {
+    private string _title = "";
+    private global::CorUI.Dialog? _dialog;
+    private WebWindowService? _svc;
+
+    private bool ShouldRenderDialog { get; set; }
+    private bool _pendingOpen;
+
+    private ElementReference? _backdropRef;
+    private ElementReference? _dialogRef;
+    private IJSObjectReference? _module;
+
+    protected override void OnInitialized()
+    {
+        _svc = Services.GetService<WebWindowService>();
+        if (_svc is not null)
+        {
+            _svc.DialogRequested += OnDialogRequested;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await Js.InvokeAsync<IJSObjectReference>("import", "./_content/CorUI/Controls/DialogPresenter.razor.js");
+        }
+    }
+
+    private Task OnDialogRequested(global::CorUI.Dialog dialog)
+    {
+        _dialog = dialog;
+        _title = dialog.Title;
+        ShouldRenderDialog = true;
+        _pendingOpen = true;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private void BackdropClicked()
+    {
+        if (_dialog?.BackdropDismissable == true)
+        {
+            CloseDialog();
+        }
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (_dialog?.DismissWithEscape == true && string.Equals(e.Key, "Escape", StringComparison.OrdinalIgnoreCase))
+        {
+            CloseDialog();
+        }
+    }
+
+    private async Task AfterContentRendered()
+    {
+        if (_pendingOpen && _module is not null && _backdropRef is not null && _dialogRef is not null)
+        {
+            _pendingOpen = false;
+            await _module.InvokeVoidAsync("open", _backdropRef, _dialogRef);
+            try { await Js.InvokeVoidAsync("portalHelpers.focus", _backdropRef); } catch { }
+        }
+    }
+
+    private async Task CloseDialog()
+    {
+        ShouldRenderDialog = false;
+        await DialogCtl.CloseActiveDialog();
+    }
+
+    public void Dispose()
+    {
+        if (_svc is not null)
+        {
+            _svc.DialogRequested -= OnDialogRequested;
+        }
+    }
+}

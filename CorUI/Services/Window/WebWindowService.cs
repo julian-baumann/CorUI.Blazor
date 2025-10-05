@@ -3,7 +3,7 @@ using Microsoft.JSInterop;
 
 namespace CorUI.Services;
 
-public sealed class WebWindowService(IJSRuntime jsRuntime, NavigationManager navigationManager) : IWindowService
+public sealed class WebWindowService(IJSRuntime jsRuntime, NavigationManager navigationManager) : IWindowService, IDialogControlService
 {
     private TaskCompletionSource<bool>? _dialogTcs;
 
@@ -37,17 +37,14 @@ public sealed class WebWindowService(IJSRuntime jsRuntime, NavigationManager nav
         await tcs.Task;
     }
 
-    public void CloseActiveDialog()
+    public Task CloseActiveDialog()
     {
         _dialogTcs?.TrySetResult(true);
         _dialogTcs = null;
+        return Task.CompletedTask;
     }
 
-    [JSInvokable("CorUI_CloseDialog")]
-    public static void CloseDialogFromJs()
-    {
-        // Static JS interop entrypoint; actual instance hookup is done via message listener in presenter
-    }
+    // JS-less; close via injected service only
 }
 
 

@@ -1,33 +1,36 @@
 @page "/demo/dialog"
+@using CorUI
+@using CorUI.Services
 
 <div class="demo-container">
-    <h1 class="demo-title">Dialog</h1>
-    
-    <Dialog
-        Title="Test Header with long text test"
-        OpenInExternalWindowButtonClicked="OpenWindow"
-        Opened="DialogOpened">
-        Test
-    </Dialog>
-    
+    <h1 class="demo-title">Dialog (Service-driven)</h1>
+    <p class="demo-description">Dialogs are opened via <code>IWindowService.OpenDialog</code>. On web, set <code>ComponentType</code> to render a component; on macOS, <code>ContentPath</code> is used for the WebView.</p>
+
     <div class="demo-section">
         <h4 class="demo-section-title">Open component as dialog</h4>
         <div class="demo-content">
-            <button @onclick="OpenDialog">Open Dialog</button>
+            <button @onclick="OpenDialog">Open Dialog (service)</button>
         </div>
+        <CodeBlock>
+@("await WindowService.OpenDialog(new Dialog {\n    ComponentType = typeof(TestApp.Pages.ShowcaseDialog),\n    Title = \"Service Dialog\",\n    Width = 640, Height = 480,\n    BackdropDismissable = true, DismissWithEscape = true,\n    ContentPath = \"/showcase/dialog\" // for macOS\n});")
+        </CodeBlock>
     </div>
 </div>
 
 @code {
-    private bool DialogOpened { get; set; }
+    [Inject] private IWindowService WindowService { get; set; } = null!;
 
-    private void OpenDialog()
+    private async Task OpenDialog()
     {
-        DialogOpened = true;
+        await WindowService.OpenDialog(new Dialog
+        {
+            ComponentType = typeof(TestApp.Pages.ShowcaseDialog),
+            Title = "Service Dialog",
+            Width = 640,
+            Height = 480,
+            BackdropDismissable = true,
+            DismissWithEscape = true,
+            ContentPath = "/showcase/dialog"
+        });
     }
-
-    private void OpenWindow()
-    {
-    }
-
 }

@@ -13,6 +13,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IViewStorage, ViewStorage>()
             .AddHostedService<MacOSApplication>()
             .AddBlazorWebView()
-            .AddScoped<IWindowService, MacWindowService>();
+            .AddScoped<MacWindowService>()
+            .AddScoped<IWindowService>(sp => sp.GetRequiredService<MacWindowService>())
+            .AddScoped<IDialogControlService>(sp => sp.GetRequiredService<MacWindowService>());
     }
 }

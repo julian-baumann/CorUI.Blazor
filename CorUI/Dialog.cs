@@ -17,4 +17,8 @@ public class Dialog
 
     public bool BackdropDismissable { get; init; } = true;
     public bool DismissWithEscape { get; init; } = true;
+
+    // Web-only (preferred over ContentPath to avoid iframes):
+    public Type? ComponentType { get; init; }
+    public IDictionary<string, object?>? Parameters { get; init; }
 }

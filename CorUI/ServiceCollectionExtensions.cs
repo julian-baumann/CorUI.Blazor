@@ -10,7 +10,9 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddScoped<IViewStorage, WebViewStorage>()
-            .AddScoped<IWindowService, WebWindowService>();
+            .AddSingleton<WebWindowService>()
+            .AddSingleton<IWindowService>(sp => sp.GetRequiredService<WebWindowService>())
+            .AddSingleton<IDialogControlService>(sp => sp.GetRequiredService<WebWindowService>());
     }
     
     // ReSharper disable once InconsistentNaming

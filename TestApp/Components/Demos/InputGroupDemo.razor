@@ -1,5 +1,6 @@
 <div class="demo-container">
     <h1 class="demo-title">Input Group</h1>
+    <p class="demo-description">Wrap inputs with a label and optional content. Use <code>InputGroup</code> for consistent spacing.</p>
 
     <div class="demo-section">
         <h4 class="demo-section-title">Basic Inputs</h4>
@@ -14,6 +15,9 @@
                 <input type="password" placeholder="Enter your password" />
             </InputGroup>
         </div>
+        <CodeBlock>
+@("<InputGroup Title=\"Name\">\n  <input />\n</InputGroup>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -26,6 +30,9 @@
                 <input placeholder="Choose a username" />
             </InputGroup>
         </div>
+        <CodeBlock>
+@("<InputGroup Title=\"API Key\"><input readonly /></InputGroup>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -40,6 +47,9 @@
                 <Toggle Title="Enable notifications" />
             </InputGroup>
         </div>
+        <CodeBlock>
+@("<InputGroup Title=\"Theme\">\n  <SegmentedControl Options=\"...\" @bind-SelectedOption=\"theme\" />\n</InputGroup>")
+        </CodeBlock>
     </div>
 </div>
 

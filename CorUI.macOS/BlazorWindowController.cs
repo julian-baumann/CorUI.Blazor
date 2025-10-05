@@ -7,16 +7,27 @@ public sealed class BlazorWindowController : NSWindowController
     private readonly Window _config;
     private WindowDelegate? _windowDelegate;
     private NSToolbar? _toolbar;
+    private NSTimer? _showFallbackTimer;
+    private bool _isClosed;
 
     public BlazorWindowController(Action<BlazorWindowController>? onClosed, Window windowConfiguration, IServiceProvider serviceProvider) : base(CreateWindow(windowConfiguration))
     {
         _onClosed = onClosed;
         _config = windowConfiguration;
         _contentController = new BlazorWebView(serviceProvider, windowConfiguration);
-        _contentController.Ready += () =>
+        _contentController.Ready += OnContentReady;
+        // Fallback: show the window after 3 seconds if Ready hasn't fired yet
+        _showFallbackTimer = NSTimer.CreateScheduledTimer(TimeSpan.FromSeconds(3), _ =>
         {
-            Window.MakeKeyAndOrderFront(null);
-        };
+            if (_isClosed)
+            {
+                return;
+            }
+            if (!Window.IsKeyWindow || !Window.IsVisible)
+            {
+                ShowAndFocusWindow();
+            }
+        });
 
         if (Window is null)
         {
@@ -31,6 +42,15 @@ public sealed class BlazorWindowController : NSWindowController
 
         _windowDelegate = new WindowDelegate(this);
         Window.Delegate = _windowDelegate;
+    }
+
+    private void OnContentReady()
+    {
+        if (_isClosed)
+        {
+            return;
+        }
+        ShowAndFocusWindow();
     }
 
     public override void ShowWindow(NSObject? sender)
@@ -108,6 +128,36 @@ public sealed class BlazorWindowController : NSWindowController
         _onClosed?.Invoke(this);
     }
 
+    private void ShowAndFocusWindow()
+    {
+        if (_isClosed)
+        {
+            return;
+        }
+        NSApplication.SharedApplication.InvokeOnMainThread(() =>
+        {
+            try
+            {
+                // Activate app if supported, otherwise just bring window to front
+                try { NSApplication.SharedApplication.ActivateIgnoringOtherApps(true); } catch { }
+                if (Window is null || Window.Handle == IntPtr.Zero)
+                {
+                    return;
+                }
+                Window.OrderFrontRegardless();
+                if (!Window.IsKeyWindow)
+                {
+                    Window.MakeKeyWindow();
+                }
+                if (Window.ContentView is { } cv)
+                {
+                    Window.MakeFirstResponder(cv);
+                }
+            }
+            catch { }
+        });
+    }
+
     private static NSWindow CreateWindow(Window windowConfiguration) => new(
         new CGRect(0, 0, windowConfiguration.Width, windowConfiguration.Height),
         NSWindowStyle.FullSizeContentView | NSWindowStyle.Titled,
@@ -118,6 +168,17 @@ public sealed class BlazorWindowController : NSWindowController
     {
         public override void WillClose(NSNotification notification)
         {
+            owner._isClosed = true;
+            try
+            {
+                if (owner._showFallbackTimer is not null)
+                {
+                    owner._showFallbackTimer.Invalidate();
+                    owner._showFallbackTimer = null;
+                }
+            }
+            catch { }
+            try { owner._contentController.Ready -= owner.OnContentReady; } catch { }
             owner._contentController.Dispose();
             owner._windowDelegate = null;
             owner.HandleClosed();

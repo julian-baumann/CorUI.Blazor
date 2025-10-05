@@ -1,11 +1,15 @@
 <div class="demo-container">
     <h1 class="demo-title">Toggle</h1>
+    <p class="demo-description">Toggles represent on/off state. Bind to a boolean via <code>@("@bind-Checked")</code>.</p>
 
     <div class="demo-section">
         <h4 class="demo-section-title">Basic Toggle</h4>
         <div class="demo-content">
             <Toggle Title="Enable feature" />
         </div>
+        <CodeBlock>
+@("<Toggle Title=\"Enable feature\" />")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -16,6 +20,9 @@
                 Notifications are @(isEnabled ? "enabled" : "disabled")
             </span>
         </div>
+        <CodeBlock>
+@("<Toggle @bind-Checked=\"isEnabled\" Title=\"Enable notifications\" />")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -42,6 +49,9 @@
                 </ListItem>
             </List>
         </div>
+        <CodeBlock>
+@("<List><ListItem>...<Toggle/></ListItem></List>")
+        </CodeBlock>
     </div>
 </div>
 

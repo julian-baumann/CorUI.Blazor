@@ -299,7 +299,7 @@ button:focus-visible {
     top: 6.5px;
     left: 8.5px;
     width: 2px;
-    height: 5px;
+    height: 4px;
     background-color: var(--spinner-color);
     border-radius: 2px;
     -webkit-animation: spinnerBlade 1s linear infinite;
@@ -365,7 +365,7 @@ button:focus-visible {
     top: 11.5px;
     left: 15px;
     width: 4px;
-    height: 9px;
+    height: 6px;
     border-radius: 2px;
 }
 

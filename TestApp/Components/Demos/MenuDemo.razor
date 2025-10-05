@@ -1,5 +1,6 @@
 <div class="demo-container">
     <h1 class="demo-title">Menu</h1>
+    <p class="demo-description">Menus wrap a trigger and a content section. Use <code>Menu</code>, <code>MenuButton</code>, and <code>MenuContent</code>.</p>
 
     <div class="demo-section">
         <h4 class="demo-section-title">Button Menu</h4>
@@ -17,6 +18,9 @@
                 </MenuContent>
             </Menu>
         </div>
+        <CodeBlock>
+@("<Menu>\n  <MenuButton>Open Menu</MenuButton>\n  <MenuContent>...items...</MenuContent>\n</Menu>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -35,6 +39,9 @@
                 </MenuContent>
             </Menu>
         </div>
+        <CodeBlock>
+@("<Menu IconButton=\"true\">...</Menu>")
+        </CodeBlock>
     </div>
 
     <div class="demo-section">
@@ -57,5 +64,8 @@
                 </MenuContent>
             </Menu>
         </div>
+        <CodeBlock>
+@("<Menu IsContextMenu=\"true\">\n  <ContextTrigger>...area...</ContextTrigger>\n  <MenuContent>...</MenuContent>\n</Menu>")
+        </CodeBlock>
     </div>
 </div> 
