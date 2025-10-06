@@ -8,6 +8,7 @@
         <NoWarn>$(NoWarn);XCODE_26_0_PREVIEW</NoWarn>
         <StaticWebAssetsEnabled>true</StaticWebAssetsEnabled>
         <RootNamespace>TestApp.macOS</RootNamespace>
+        <Platforms>AnyCPU;ARM32;ARM64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>

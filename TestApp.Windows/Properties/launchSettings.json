@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TestApp.Windows (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "TestApp.Windows (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>Microsoft.AspNetCore.Components.WebView.WinUI</RootNamespace>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+    <Nullable>enable</Nullable>
+    <IncludeSymbols>true</IncludeSymbols>
+    <DebugType>portable</DebugType>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <GenerateLibraryLayout>true</GenerateLibraryLayout>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Build WinUI apps with Blazor and WebView2.</Description>
+    <PackageTags>WinUI, WinAppSDK, Windows, XAML, blazor, webview, aspnet</PackageTags>
+    <PackageId>BlazorWebView.WinUI3</PackageId>
+    <Product>BlazorWebView for WinUI</Product>
+    <RepositoryUrl>https://github.com/w-ahmad/BlazorWebView.WinUI</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/w-ahmad/BlazorWebView.WinUI</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)..\..\artifacts\NuGet\$(Configuration)\</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230913002" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="6.0.36" />
+    <PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.0.230907" />
+  </ItemGroup>
+</Project>

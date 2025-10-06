@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>CorUI.Windows</RootNamespace>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+
+	<Nullable>enable</Nullable>
+	<IncludeSymbols>true</IncludeSymbols>
+	<DebugType>portable</DebugType>
+	<EmbedUntrackedSources>true</EmbedUntrackedSources>
+	<GenerateLibraryLayout>true</GenerateLibraryLayout>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+	<AllowedOutputExtensionsInPackageBuildOutputFolder>.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.6584" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250916003" />
+	<PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="9.0.9" />
+	<PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.250402" />
+	<PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="9.0.8" />
+  </ItemGroup>
+  
+</Project>
