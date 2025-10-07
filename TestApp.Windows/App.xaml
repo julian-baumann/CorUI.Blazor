@@ -6,11 +6,30 @@
     xmlns:local="using:TestApp.Windows">
     <Application.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!-- Other merged dictionaries here -->
-            </ResourceDictionary.MergedDictionaries>
+
+            <!--<ResourceDictionary.MergedDictionaries>-->
+                <!--<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                --><!-- Other merged dictionaries here --><!--
+            </ResourceDictionary.MergedDictionaries>-->
             <!-- Other app resources here -->
+
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="Transparent"/>
+                    <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="Transparent"/>
+                    <SolidColorBrush x:Key="LayerFillColorAltBrush" Color="Transparent"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="Transparent"/>
+                    <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="Transparent"/>
+                    <SolidColorBrush x:Key="LayerFillColorAltBrush" Color="Transparent"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="Transparent"/>
+                    <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="Transparent"/>
+                    <SolidColorBrush x:Key="LayerFillColorAltBrush" Color="Transparent"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

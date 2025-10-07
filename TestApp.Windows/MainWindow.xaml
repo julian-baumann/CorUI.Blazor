@@ -4,8 +4,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:TestApp.Windows"
+    xmlns:testApp="using:TestApp"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:winUi="using:Microsoft.AspNetCore.Components.WebView.WinUI"
     mc:Ignorable="d"
     Title="TestApp.Windows">
 
@@ -14,6 +16,12 @@
     </Window.SystemBackdrop>
 
     <Grid>
-
+        <winUi:BlazorWebView x:Name="BlazorWebView"
+                             HostPage="wwwroot\index.html">
+            <winUi:BlazorWebView.RootComponents>
+                <winUi:RootComponent Selector="#app"
+                                     ComponentType="testApp:App" />
+            </winUi:BlazorWebView.RootComponents>
+        </winUi:BlazorWebView>
     </Grid>
 </Window>

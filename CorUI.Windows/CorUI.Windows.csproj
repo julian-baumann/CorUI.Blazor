@@ -22,7 +22,14 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250916003" />
 	<PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="9.0.9" />
 	<PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.250402" />
-	<PackageReference Include="Microsoft.AspNetCore.Components.WebView" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CorUI\CorUI.csproj" />
   </ItemGroup>
   
 </Project>

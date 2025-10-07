@@ -1,6 +1,9 @@
-﻿using CorUI.Windows;
+﻿using CorUI;
+using CorUI.Windows;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using System;
@@ -39,13 +42,23 @@ public partial class App : Application
 
     private static IHost CreateHost()
     {
-        var builder = Host.CreateApplicationBuilder();
+        var builder = WebApplication.CreateBuilder();
 
-        //builder.Services.AddSingleton<IApp>(app);
+        builder.Services.AddLogging();
+
+        // Windows host uses BlazorWebView; do not register web/server services here
         builder.Services.AddWindows();
+        builder.Services.AddCorUINative<TestApp.Windows.AppHost>(
+            new BlazorWebViewOptions
+            {
+                RootComponent = typeof(TestApp.App)
+            }
+        );
         builder.Services.AddSingleton<MainWindow>();
 
-        return builder.Build();
+        var app = builder.Build();
+
+        return app;
     }
 
     private static void StopHost()

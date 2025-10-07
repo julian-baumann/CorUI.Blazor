@@ -150,6 +150,8 @@ internal class WebView2WebViewManager : WebViewManager
         var developerTools = _developerTools;
 
         ApplyDefaultWebViewSettings(developerTools);
+        // Ensure the WebView surface itself is transparent so CSS 'vibrancy' can show through
+        _webview.DefaultBackgroundColor = global::Windows.UI.Color.FromArgb(0, 0, 0, 0);
         _blazorWebViewInitialized?.Invoke(new BlazorWebViewInitializedEventArgs
         {
             WebView = _webview,
@@ -174,6 +176,15 @@ internal class WebView2WebViewManager : WebViewManager
 					}
 				};
 			");
+
+        // Inject platform-specific CSS classes onto <html> early, similar to macOS
+        var __injectClasses = @"(function(){try{var e=document.documentElement||document.getElementsByTagName('html')[0];if(!e){return;}e.classList.add('windows');e.classList.add('vibrancy');e.classList.add('window-buttons-right');}catch{}})();";
+        await _webview.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(__injectClasses);
+        // Fallback for already-loaded docs (navigation edge-cases)
+        _webview.CoreWebView2.DOMContentLoaded += async (s, e) =>
+        {
+            try { await _webview.CoreWebView2.ExecuteScriptAsync(__injectClasses); } catch { }
+        };
 
         QueueBlazorStart();
 
