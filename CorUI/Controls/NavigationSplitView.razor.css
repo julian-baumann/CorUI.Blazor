@@ -52,7 +52,7 @@
 
 .sidebar-resizer {
     flex: 0 0 6px;
-    cursor: col-resize;
+    cursor: ew-resize;
     position: relative;
     display: flex;
     align-items: center;

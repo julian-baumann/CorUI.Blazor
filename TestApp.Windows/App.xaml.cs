@@ -88,7 +88,7 @@ public partial class App : Application
 
         mainWindow = host.Services.GetRequiredService<MainWindow>();
         mainWindow.Closed += OnMainWindowClosed;
-        mainWindow.AppWindow.Show(true);
+        //mainWindow.AppWindow.Show(true);
     }
 
     private void OnMainWindowClosed(object sender, WindowEventArgs args)

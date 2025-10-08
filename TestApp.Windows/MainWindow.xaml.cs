@@ -26,11 +26,19 @@ namespace TestApp.Windows
     {
         public MainWindow(IServiceProvider serviceProvider)
         {
+            AppWindow.Hide();
+            ExtendsContentIntoTitleBar = true;
             InitializeComponent();
             Environment.SetEnvironmentVariable("WEBVIEW2_DEFAULT_BACKGROUND_COLOR", "00000000");
             BlazorWebView.Services = serviceProvider;
-
+            BlazorWebView.BlazorWebViewInitialized += BlazorWebView_BlazorWebViewInitialized;
             BlazorWebView.BlazorWebViewInitializing += BlazorWebView_BlazorWebViewInitializing;
+            this.AppWindow.TitleBar.PreferredHeightOption = Microsoft.UI.Windowing.TitleBarHeightOption.Tall;
+        }
+
+        private void BlazorWebView_BlazorWebViewInitialized(object? sender, Microsoft.AspNetCore.Components.WebView.BlazorWebViewInitializedEventArgs e)
+        {
+            AppWindow.Show();
         }
 
         private void BlazorWebView_BlazorWebViewInitializing(object? sender, Microsoft.AspNetCore.Components.WebView.BlazorWebViewInitializingEventArgs e)

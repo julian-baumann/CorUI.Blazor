@@ -15,8 +15,9 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid>
+    <Grid Background="Transparent">
         <winUi:BlazorWebView x:Name="BlazorWebView"
+                             Background="Transparent"
                              HostPage="wwwroot\index.html">
             <winUi:BlazorWebView.RootComponents>
                 <winUi:RootComponent Selector="#app"

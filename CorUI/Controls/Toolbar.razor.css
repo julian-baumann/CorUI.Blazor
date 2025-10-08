@@ -9,7 +9,7 @@
     padding-left: calc(var(--window-buttons-width) + 15px);
 }
 
-.window-buttons-right .window-button-spacer .toolbar-content {
+.window-buttons-right .toolbar-content {
     padding-right: calc(var(--window-buttons-width) + 15px);
 }
 

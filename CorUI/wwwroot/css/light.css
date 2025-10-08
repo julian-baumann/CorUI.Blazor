@@ -1,6 +1,6 @@
 :root {
     --background: #FAFAFA;
-    --window-background: var(--background); 
+    --window-background: var(--background);
     --sidebar-background: #EBEBEB;
     --text-color: #000000;
     --nav-bar-background: #FFFFFF;
@@ -16,7 +16,6 @@
     --menu-brightness: 100%;
     --menu-shadow: 0 0 50px rgba(151, 151, 151, 0.4);
     --spinner-color: #8e8e93;
-
     --glass-bg: rgba(255, 255, 255, 0.2);
     --container-bg: rgba(255, 255, 255, 0.25);
     --label-bg: rgba(255, 255, 255, 0.15);
@@ -25,7 +24,6 @@
     --placeholder-color: rgba(90, 90, 90, 0.6);
     --shadow-light: rgba(255, 255, 255, 0.1);
     --shadow-dark: rgba(0, 0, 0, 0.25);
-
     /* Segmented Control Variables */
     --segmented-bg: rgba(120, 120, 128, 0.12);
     --segmented-text: #000000;
@@ -34,26 +32,24 @@
     --segmented-border: transparent;
     --segmented-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     --segmented-hover: rgba(120, 120, 128, 0.16);
-
     /* Button Variables */
     --button-bg: rgba(120, 120, 128, 0.12);
     --button-hover-bg: rgba(120, 120, 128, 0.07);
     --button-active-bg: rgba(120, 120, 128, 0.20);
     --button-text: rgba(0, 0, 0, 0.85);
     --button-border: transparent;
-
     --primary-button-bg: rgb(0, 122, 255);
     --primary-button-hover-bg: rgb(10, 132, 255);
     --primary-button-active-bg: rgb(20, 142, 255);
     --primary-button-text: white;
     --primary-button-border: transparent;
-
     --danger-button-bg: rgb(255, 59, 48);
     --danger-button-hover-bg: rgb(255, 69, 58);
     --danger-button-active-bg: rgb(255, 79, 68);
     --danger-button-text: white;
     --danger-button-border: transparent;
-
     --select-background: rgb(62, 106, 230);
     --select-text-color: #ffffff;
+    --scrollbar-color: rgba(0, 0, 0, 0.3);
+    --scrollbar-active-color: rgba(0, 0, 0, 0.5);
 }

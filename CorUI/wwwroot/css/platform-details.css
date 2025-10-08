@@ -9,6 +9,11 @@
     --window-buttons-width: 82px;
 }
 
+.windows {
+    --toolbar-content-height: 47px;
+    --window-buttons-width: 140px;
+}
+
 *:not(.selectable) {
     user-select: none;
 }
