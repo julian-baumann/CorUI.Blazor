@@ -10,6 +10,8 @@ public sealed class WpfApplication : IHostedService
 
     public WpfApplication(IHostApplicationLifetime lifetime, IServiceProvider serviceProvider)
     {
+        
+        Environment.SetEnvironmentVariable("WEBVIEW2_DEFAULT_BACKGROUND_COLOR", "0");
         ServiceProvider = serviceProvider;
         // App run is triggered by TestApp.Wpf; no explicit Main loop here.
     }

@@ -3,12 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using Microsoft.AspNetCore.Components.WebView.Wpf;
 using Microsoft.AspNetCore.Components.WebView;
+using WpfWindow = System.Windows.Window;
 
 namespace CorUI.Wpf;
 
 public sealed class WpfWindowService(IServiceProvider serviceProvider) : IWindowService, IDialogControlService
 {
-    private Window? _activeDialogWindow;
+    private WpfWindow? _activeDialogWindow;
 
     public Task OpenWindow(CorUI.Window window)
     {
@@ -40,7 +41,7 @@ public sealed class WpfWindowService(IServiceProvider serviceProvider) : IWindow
         {
             try
             {
-                var owner = Application.Current?.Windows.Cast<Window?>().FirstOrDefault(w => w is not null && w.IsActive);
+                var owner = Application.Current?.Windows.Cast<WpfWindow?>().FirstOrDefault(w => w is not null && w.IsActive);
                 var host = CreateBlazorHostWindow(new CorUI.Window
                 {
                     ContentPath = dialog.ContentPath,
@@ -87,11 +88,11 @@ public sealed class WpfWindowService(IServiceProvider serviceProvider) : IWindow
         return tcs.Task;
     }
 
-    private Window CreateBlazorHostWindow(CorUI.Window window)
+    private WpfWindow CreateBlazorHostWindow(CorUI.Window window)
     {
         var options = serviceProvider.GetRequiredService<BlazorWebViewOptions>();
 
-        var w = new Window
+        var w = new WpfWindow
         {
             Title = string.IsNullOrWhiteSpace(window.Title) ? string.Empty : window.Title,
             Width = window.Width,
@@ -102,7 +103,7 @@ public sealed class WpfWindowService(IServiceProvider serviceProvider) : IWindow
 
         var bvw = new BlazorWebView
         {
-            HostPage = options.RelativeHostPath
+            HostPage = options.HostPath
         };
         bvw.Services = serviceProvider;
         bvw.RootComponents.Add(new RootComponent { Selector = "#app", ComponentType = options.RootComponent });

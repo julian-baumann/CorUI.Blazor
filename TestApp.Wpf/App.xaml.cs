@@ -1,6 +1,6 @@
 using CorUI;
 using CorUI.Wpf;
-using Microsoft.AspNetCore.Builder;
+// using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -32,8 +32,7 @@ public partial class App : Application
                         RootComponent = typeof(TestApp.App)
                     }
                 )
-                .AddWpf()
-                .AddRazorComponents();
+                .AddWpf();
         });
 
         _host = builder.Build();

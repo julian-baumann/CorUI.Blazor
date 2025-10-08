@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -10,20 +10,55 @@
     <RootNamespace>TestApp.Wpf</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="9.0.9" />
-  </ItemGroup>
+  
 
   <ItemGroup>
     <ProjectReference Include="..\CorUI\CorUI.csproj" />
     <ProjectReference Include="..\CorUI.Wpf\CorUI.Wpf.csproj" />
     <ProjectReference Include="..\TestApp\TestApp.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
   </ItemGroup>
 
+  
+
   <ItemGroup>
-    <None Update="wwwroot\**\*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <BundleResource Include="wwwroot\app.css" />
+    <BundleResource Include="wwwroot\webfonts\fa-brands-400.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-brands-400.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-duotone-900.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-duotone-900.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-duotone-light-300.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-duotone-light-300.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-duotone-regular-400.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-duotone-regular-400.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-duotone-thin-100.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-duotone-thin-100.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-light-300.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-light-300.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-regular-400.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-regular-400.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-duotone-light-300.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-duotone-light-300.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-duotone-regular-400.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-duotone-regular-400.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-duotone-solid-900.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-duotone-solid-900.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-duotone-thin-100.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-duotone-thin-100.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-light-300.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-light-300.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-regular-400.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-regular-400.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-solid-900.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-solid-900.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-thin-100.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-sharp-thin-100.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-solid-900.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-solid-900.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-thin-100.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-thin-100.woff2" />
+    <BundleResource Include="wwwroot\webfonts\fa-v4compatibility.ttf" />
+    <BundleResource Include="wwwroot\webfonts\fa-v4compatibility.woff2" />
   </ItemGroup>
 
 </Project>

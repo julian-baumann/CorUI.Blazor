@@ -8,6 +8,9 @@ public static class ServiceCollectionExtensions
     // ReSharper disable once InconsistentNaming
     public static IServiceCollection AddWpf(this IServiceCollection services)
     {
+        services.AddWpfBlazorWebView();
+        services.AddBlazorWebViewDeveloperTools();
+        
         return services
             .AddSingleton<IViewStorage, ViewStorage>()
             .AddHostedService<WpfApplication>()
