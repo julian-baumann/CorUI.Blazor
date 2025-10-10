@@ -12,6 +12,7 @@ using Windows.Foundation;
 using System.Runtime.InteropServices;
 using WinRT.Interop;
 using Windows.UI;
+using Microsoft.UI.Dispatching;
 
 namespace CorUI.Windows.Services;
 
@@ -192,6 +193,41 @@ public sealed class WindowsWindowService(IServiceProvider serviceProvider, Blazo
                     _dialogSubclassHandleAllocated = true;
                     SetWindowSubclass(_dialogHwnd, _dialogSubclassProc, _dialogSubclassId, IntPtr.Zero);
                 }
+
+                // Also hook WebView2 accelerator keys so ESC works when focus is inside the web content
+                blazor.BlazorWebViewInitialized += (_, __) =>
+                {
+                    try
+                    {
+                        var core = blazor.WebView?.CoreWebView2;
+                        if (core is null)
+                        {
+                            return;
+                        }
+                        // Fallback: intercept KeyDown routed event on WebView itself
+                        blazor.WebView.KeyDown += (s, e) =>
+                        {
+                            try
+                            {
+                                if (!_dismissWithEscapeForCurrentDialog)
+                                {
+                                    return;
+                                }
+                                if (e.Key == global::Windows.System.VirtualKey.Escape)
+                                {
+                                    e.Handled = true;
+                                    _ = CloseActiveDialog();
+                                }
+                            }
+                            catch
+                            {
+                            }
+                        };
+                    }
+                    catch
+                    {
+                    }
+                };
             }
             catch
             {

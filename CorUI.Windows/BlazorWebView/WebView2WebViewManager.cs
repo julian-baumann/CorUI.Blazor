@@ -130,7 +130,14 @@ internal class WebView2WebViewManager : WebViewManager
     /// <inheritdoc />
     protected override void SendMessage(string message)
     {
-        _webview.CoreWebView2.PostWebMessageAsString(message);
+        try
+        {
+            _webview.CoreWebView2.PostWebMessageAsString(message);
+        }
+        catch(Exception exception)
+        {
+            Console.Error.WriteLine(exception);
+        }
     }
 
     private async Task<bool> TryInitializeWebView2()

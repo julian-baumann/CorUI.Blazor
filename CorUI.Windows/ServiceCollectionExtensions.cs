@@ -19,9 +19,9 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton(_ => new WinUIBlazorMarkerService());
 
         services.TryAddSingleton<IViewStorage, ViewStorage>();
-        services.AddScoped<WindowsWindowService>();
-        services.AddScoped<IWindowService>(sp => sp.GetRequiredService<WindowsWindowService>());
-        services.AddScoped<IDialogControlService>(sp => sp.GetRequiredService<WindowsWindowService>());
+        services.TryAddSingleton<WindowsWindowService>();
+        services.TryAddSingleton<IWindowService>(sp => sp.GetRequiredService<WindowsWindowService>());
+        services.TryAddSingleton<IDialogControlService>(sp => sp.GetRequiredService<WindowsWindowService>());
 
         return services;
         
